@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:46.758Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nParlay Safari PARLAYSAFAR! September 17th MLB 2pm White Sox ML () vs Orioles 1030pm Dodgers / Phillies UNDER 8 (34) +105 (2u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8504.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "Dodgers",
+        "home": "Phillies"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Parlay Safari PARLAYSAFAR! September 17th MLB 2pm White Sox ML +105 (2u) vs Orioles 1030pm Dodgers / Phillies UNDER 8 -120 (34)",
+        "bet": "Parlay Safari PARLAYSAFAR! September 17th MLB 2pm White Sox ML () vs Orioles 1030pm Dodgers / Phillies UNDER 8 (34)",
+        "odds": "+105",
+        "units": "2u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

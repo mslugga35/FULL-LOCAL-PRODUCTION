@@ -1,0 +1,17 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17893,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T13:35:42.730551",
+  "created_utc": 1758044142,
+  "media_file": "20250916_133542_17893.oga",
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T17:35:45.260Z"
+}

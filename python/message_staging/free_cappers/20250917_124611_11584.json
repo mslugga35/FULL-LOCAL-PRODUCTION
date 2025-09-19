@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:30:01.545Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n**Diamond**\nOrioles F5 ML () lu Diamondbacks F5 ML () lu -120",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_124611_11584.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "Orioles F5 ML (-120) lu Diamondbacks F5 ML (-105) lu",
+        "bet": "Orioles F5 ML () lu Diamondbacks F5 ML () lu",
+        "odds": "-120",
+        "units": null,
+        "type": "moneyline"
+      }
+    ],
+    "capper": "Diamond",
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

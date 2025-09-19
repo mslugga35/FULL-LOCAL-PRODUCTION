@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 1560546587,
+  "chat_title": "Cappers leaked ‼️",
+  "chat_username": "Cappersleaked1",
+  "message_id": 8447,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-15T16:16:32.641339",
+  "created_utc": 1757967392,
+  "media_file": "20250915_161631_8447.jpg",
+  "routed_from": "inbox",
+  "routed_to": "leaked_cappers",
+  "routed_at": "2025-09-15T20:16:33.943Z",
+  "ocr_text": "PORTER PICKS PorterPicks Yesterday at 11:51 AM NFL WEEK 2 MONDAY NIGHT FOOTBALL SELECTIONS HOUSTON TEXANS (-2.5) over Tampa Bay Buccaneers (3-UNITS) s s s $ BUCCS/TEXANS UNDER 43 (2-UNITS) $ $ 4:00pm PST - ABC/ESPN",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-15T20:16:35.427Z"
+}

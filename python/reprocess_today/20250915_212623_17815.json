@@ -1,0 +1,16 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17815,
+  "text": "Shit is a flag fest",
+  "has_media": false,
+  "needs_ocr": false,
+  "timestamp": "2025-09-15T21:26:23.190125",
+  "created_utc": 1757985983,
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T01:26:26.911Z"
+}

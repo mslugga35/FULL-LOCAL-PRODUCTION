@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:59.123Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nNicky Cashin MICKYCASHIN MLB Wednesday Chicago White Sox ML () 1.5 units New York Mets ML () 1.5 units Kansas City Royals ML () 1.5 units Los Angeles Dodgers ML () 2 units +105 (1.5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_123403_8511.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "Nicky Cashin MICKYCASHIN MLB Wednesday Chicago White Sox ML (+105) 1.5 units New York Mets ML (-120) 1.5 units Kansas City Royals ML (-120) 1.5 units Los Angeles Dodgers ML (-142) 2 units",
+        "bet": "Nicky Cashin MICKYCASHIN MLB Wednesday Chicago White Sox ML () 1.5 units New York Mets ML () 1.5 units Kansas City Royals ML () 1.5 units Los Angeles Dodgers ML () 2 units",
+        "odds": "+105",
+        "units": "1.5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

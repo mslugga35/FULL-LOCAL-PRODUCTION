@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:30:04.109Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nWhite Sox ML () 1.5 units +104 (1.5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_135431_11598.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "White Sox ML (+104) 1.5 units",
+        "bet": "White Sox ML () 1.5 units",
+        "odds": "+104",
+        "units": "1.5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

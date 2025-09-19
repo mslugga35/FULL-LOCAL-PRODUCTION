@@ -1,0 +1,369 @@
+[2025-09-14T14-49-51-708Z] CONFIG AUDIT
+✓ unchanged: .env (93176867b5d2)
+✓ unchanged: discord_sender.js (53ea7cc6a840)
+✓ unchanged: forwarder.py (b4dc3e0cc7fc)
+✓ unchanged: telegram_to_discord.py (5b150250cd64)
+✏️  changed: message_router.js
+--- old
++++ new
+-       
++ // Move media file if it exists      if (message.media_file) {        const mediaSourcePath = path.join(INBOX_DIR, message.media_file);        const mediaDestPath = path.join(destDir, message.media_file);                try {          await fs.access(mediaSourcePath);          await fs.rename(mediaSourcePath, mediaDestPath);          console.log(`    📸 Moved image: ${message.media_file}`);        } catch (err) {          console.log(`    ⚠️  Image not found: ${message.media_file}`);        }      }
+-       // Delete from inbox
++       
+-       await fs.unlink(filePath);
++       // Delete from inbox
+-       
++       await fs.unlink(filePath);
+-       console.log(`  ✅ Routed to ${folder}: ${path.basename(filePath)}`);
++       
+-       this.stats.routed++;
++       console.log(`  ✅ Routed to ${folder}: ${path.basename(filePath)}`);
+-       
++       this.stats.routed++;
+-     } catch (error) {
++       
+-       console.error(`  ❌ Error routing ${path.basename(filePath)}:`, error.message);
++     } catch (error) {
+-       this.stats.errors++;
++       console.error(`  ❌ Error routing ${path.basename(filePath)}:`, error.message);
+-     }
++       this.stats.errors++;
+-     
++     }
+-     this.stats.processed++;
++     
+-   }
++     this.stats.processed++;
+- 
++   }
+-   determineFolder(message) {
++ 
+-     // Try to get channel title from various fields
++   determineFolder(message) {
+-     const channelTitle = message.chat_title || 
++     // Try to get channel title from various fields
+-                         message.channel_title || 
++     const channelTitle = message.chat_title || 
+-                         message.from || 
++                         message.channel_title || 
+-                         message.channel || 
++                         message.from || 
+-                         '';
++                         message.channel || 
+-     
++                         '';
+-     // First try exact match
++     
+-     for (const [pattern, folder] of Object.entries(CHANNEL_MAPPINGS)) {
++     // First try exact match
+-       if (channelTitle === pattern) {
++     for (const [pattern, folder] of Object.entries(CHANNEL_MAPPINGS)) {
+-         return folder;
++       if (channelTitle === pattern) {
+-       }
++         return folder;
+-     }
++       }
+-     
++     }
+-     // Then try case-insensitive contains match
++     
+-     const lowerTitle = channelTitle.toLowerCase();
++     // Then try case-insensitive contains match
+-     for (const [pattern, folder] of Object.entries(CHANNEL_MAPPINGS)) {
++     const lowerTitle = channelTitle.toLowerCase();
+-       if (lowerTitle.includes(pattern.toLowerCase())) {
++     for (const [pattern, folder] of Object.entries(CHANNEL_MAPPINGS)) {
+-         return folder;
++       if (lowerTitle.includes(pattern.toLowerCase())) {
+-       }
++         return folder;
+-     }
++       }
+-     
++     }
+-     // Check message text for clues
++     
+-     const text = (message.text || '').toLowerCase();
++     // Check message text for clues
+-     if (text.includes('free') || text.includes('cappers free')) {
++     const text = (message.text || '').toLowerCase();
+-       return 'free_cappers';
++     if (text.includes('free') || text.includes('cappers free')) {
+-     }
++       return 'free_cappers';
+-     if (text.includes('leaked') || text.includes('handicappers')) {
++     }
+-       return 'leaked_cappers';
++     if (text.includes('leaked') || text.includes('handicappers')) {
+-     }
++       return 'leaked_cappers';
+-     if (text.includes('exclusive')) {
++     }
+-       return 'exclusive_cappers';
++     if (text.includes('exclusive')) {
+-     }
++       return 'exclusive_cappers';
+-     if (text.includes('uatb')) {
++     }
+-       return 'paid_uatb';
++     if (text.includes('uatb')) {
+-     }
++       return 'paid_uatb';
+-     if (text.includes('diamond') || text.includes('chamba')) {
++     }
+-       return 'paid_diamond';
++     if (text.includes('diamond') || text.includes('chamba')) {
+-     }
++       return 'paid_diamond';
+-     if (text.includes('paid') || text.includes('premium') || text.includes('vip')) {
++     }
+-       return 'paid_cappers';
++     if (text.includes('paid') || text.includes('premium') || text.includes('vip')) {
+-     }
++       return 'paid_cappers';
+-     
++     }
+-     // Default fallback
++     
+-     console.log(`  ⚠️  Unknown channel: "${channelTitle}"`);
++     // Default fallback
+-     return null;
++     console.log(`  ⚠️  Unknown channel: "${channelTitle}"`);
+-   }
++     return null;
+- 
++   }
+-   getStats() {
++ 
+-     const uptime = Math.floor((Date.now() - this.stats.startTime) / 1000);
++   getStats() {
+-     const hours = Math.floor(uptime / 3600);
++     const uptime = Math.floor((Date.now() - this.stats.startTime) / 1000);
+-     const minutes = Math.floor((uptime % 3600) / 60);
++     const hours = Math.floor(uptime / 3600);
+-     
++     const minutes = Math.floor((uptime % 3600) / 60);
+-     return {
++     
+-       uptime: `${hours}h ${minutes}m`,
++     return {
+-       processed: this.stats.processed,
++       uptime: `${hours}h ${minutes}m`,
+-       routed: this.stats.routed,
++       processed: this.stats.processed,
+-       errors: this.stats.errors,
++       routed: this.stats.routed,
+-       successRate: this.stats.processed > 0 
++       errors: this.stats.errors,
+-         ? Math.round(this.stats.routed / this.stats.processed * 100) 
++       successRate: this.stats.processed > 0 
+-         : 0
++         ? Math.round(this.stats.routed / this.stats.processed * 100) 
+-     };
++         : 0
+-   }
++     };
+- }
++   }
+- 
++ }
+- // Status endpoint
++ 
+- const express = require('express');
++ // Status endpoint
+- const app = express();
++ const express = require('express');
+- const PORT = process.env.ROUTER_PORT || 3007;
++ const app = express();
+- 
++ const PORT = process.env.ROUTER_PORT || 3007;
+- let router = null;
++ 
+- 
++ let router = null;
+- app.get('/', (req, res) => {
++ 
+-   const stats = router ? router.getStats() : {};
++ app.get('/', (req, res) => {
+-   
++   const stats = router ? router.getStats() : {};
+-   res.send(`
++   
+-     <!DOCTYPE html>
++   res.send(`
+-     <html>
++     <!DOCTYPE html>
+-       <head>
++     <html>
+-         <title>Message Router</title>
++       <head>
+-         <meta http-equiv="refresh" content="30">
++         <title>Message Router</title>
+-         <style>
++         <meta http-equiv="refresh" content="30">
+-           body { 
++         <style>
+-             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++           body { 
+-             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
++             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+-             color: white;
++             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+-             padding: 2rem;
++             color: white;
+-           }
++             padding: 2rem;
+-           .container { max-width: 600px; margin: 0 auto; }
++           }
+-           .card {
++           .container { max-width: 600px; margin: 0 auto; }
+-             background: rgba(255, 255, 255, 0.1);
++           .card {
+-             backdrop-filter: blur(10px);
++             background: rgba(255, 255, 255, 0.1);
+-             border-radius: 1rem;
++             backdrop-filter: blur(10px);
+-             padding: 2rem;
++             border-radius: 1rem;
+-             margin-top: 2rem;
++             padding: 2rem;
+-           }
++             margin-top: 2rem;
+-           .stat {
++           }
+-             display: flex;
++           .stat {
+-             justify-content: space-between;
++             display: flex;
+-             padding: 0.5rem 0;
++             justify-content: space-between;
+-             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
++             padding: 0.5rem 0;
+-           }
++             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+-           .stat:last-child { border-bottom: none; }
++           }
+-           .success { color: #4ade80; }
++           .stat:last-child { border-bottom: none; }
+-           .error { color: #f87171; }
++           .success { color: #4ade80; }
+-         </style>
++           .error { color: #f87171; }
+-       </head>
++         </style>
+-       <body>
++       </head>
+-         <div class="container">
++       <body>
+-           <h1>📬 Message Router</h1>
++         <div class="container">
+-           <div class="card">
++           <h1>📬 Message Router</h1>
+-             <div class="stat">
++           <div class="card">
+-               <span>Status</span>
++             <div class="stat">
+-               <span>${router ? '🟢 Running' : '🔴 Starting'}</span>
++               <span>Status</span>
+-             </div>
++               <span>${router ? '🟢 Running' : '🔴 Starting'}</span>
+-             <div class="stat">
++             </div>
+-               <span>Uptime</span>
++             <div class="stat">
+-               <span>${stats.uptime || '0h 0m'}</span>
++               <span>Uptime</span>
+-             </div>
++               <span>${stats.uptime || '0h 0m'}</span>
+-             <div class="stat">
++             </div>
+-               <span>Processed</span>
++             <div class="stat">
+-               <span>${stats.processed || 0}</span>
++               <span>Processed</span>
+-             </div>
++               <span>${stats.processed || 0}</span>
+-             <div class="stat">
++             </div>
+-               <span>Routed</span>
++             <div class="stat">
+-               <span class="success">${stats.routed || 0} (${stats.successRate || 0}%)</span>
++               <span>Routed</span>
+-             </div>
++               <span class="success">${stats.routed || 0} (${stats.successRate || 0}%)</span>
+-             <div class="stat">
++             </div>
+-               <span>Errors</span>
++             <div class="stat">
+-               <span class="error">${stats.errors || 0}</span>
++               <span>Errors</span>
+-             </div>
++               <span class="error">${stats.errors || 0}</span>
+-           </div>
++             </div>
+-         </div>
++           </div>
+-       </body>
++         </div>
+-     </html>
++       </body>
+-   `);
++     </html>
+- });
++   `);
+- 
++ });
+- app.listen(PORT, () => {
++ 
+-   console.log(`📡 Status dashboard at http://localhost:${PORT}`);
++ app.listen(PORT, () => {
+- });
++   console.log(`📡 Status dashboard at http://localhost:${PORT}`);
+- 
++ });
+- // Start the router
++ 
+- async function main() {
++ // Start the router
+-   router = new MessageRouter();
++ async function main() {
+-   await router.start();
++   router = new MessageRouter();
+- }
++   await router.start();
+- 
++ }
+- // Graceful shutdown
++ 
+- process.on('SIGINT', () => {
++ // Graceful shutdown
+-   console.log('\n👋 Shutting down...');
++ process.on('SIGINT', () => {
+-   if (router) {
++   console.log('\n👋 Shutting down...');
+-     const stats = router.getStats();
++   if (router) {
+-     console.log(`Final stats: ${stats.routed} routed, ${stats.errors} errors`);
++     const stats = router.getStats();
+-   }
++     console.log(`Final stats: ${stats.routed} routed, ${stats.errors} errors`);
+-   process.exit(0);
++   }
+- });
++   process.exit(0);
+- 
++ });
+- main().catch(error => {
++ 
+-   console.error('Fatal error:', error);
++ main().catch(error => {
+-   process.exit(1);
++   console.error('Fatal error:', error);
+- });
++   process.exit(1);
+- 
++ });
+❌ missing: /root/bots/ocr_processor.js
+✓ unchanged: paid_webhook_sender.js (f4f75c828fc1)
+✓ unchanged: watchdog-pro.js (03d92ee1690b)

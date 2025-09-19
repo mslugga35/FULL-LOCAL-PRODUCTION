@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:30:06.416Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nChelsea ML or Draw () 0.5 units Chelsea ML () 0.25 units +110 (0.5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_142306_11600.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "Chelsea ML or Draw (+110) 0.5 units Chelsea ML (+350) 0.25 units",
+        "bet": "Chelsea ML or Draw () 0.5 units Chelsea ML () 0.25 units",
+        "odds": "+110",
+        "units": "0.5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

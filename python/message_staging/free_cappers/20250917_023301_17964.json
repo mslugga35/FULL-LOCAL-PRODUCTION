@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:40.701Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nMLB Games View more bets SPREAD TOTAL WINNER -1.5 0 7.5 UBS CHC P PIT Today, 12:35pm EDT +1.5 units 7.5 -170 (1.5u)\n_Posted at 12:35pm_",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_023301_17964.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "MLB Games View more bets SPREAD TOTAL WINNER -1.5 0 7.5 UBS CHC -170 +100 -130 P PIT Today, 12:35pm EDT +1.5 units 7.5 +140 -120 +105",
+        "bet": "MLB Games View more bets SPREAD TOTAL WINNER -1.5 0 7.5 UBS CHC P PIT Today, 12:35pm EDT +1.5 units 7.5",
+        "odds": "-170",
+        "units": "1.5u",
+        "type": "spread"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": "12:35pm"
+  },
+  "sent_to_discord": false
+}

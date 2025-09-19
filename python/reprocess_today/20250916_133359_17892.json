@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17892,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T13:33:59.251253",
+  "created_utc": 1758044039,
+  "media_file": "20250916_133359_17892.jpg",
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T17:34:00.233Z",
+  "ocr_text": "1:31 Wager $1,300 BATL Go to event ID: 7030067377227956529 ATL 5G+ W NATIONALS PARK WIND SPEED BY HEIGHT 120FT Payout $2,300 Mid 2nd O WAS 6+0 Early cash out $1,235.00 BATTER V. Brujan 1B 2B M. Harris II Empty 3B O. Albies (5) 4 2 3 1 Share PITCHER WSH J. Irvin 3-2 2 Outs BALL Four seam fastball | 92.8 4 FOUL BALL Four seam fastball | 92.1 --- 3 BALL Four seam fastball | 93.2 2 FOUL BALL Four seam fastball | 93m BALL Curveball | 78.8mph BET",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T17:34:01.280Z"
+}

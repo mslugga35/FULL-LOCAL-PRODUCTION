@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-09-17T18:30:00.396Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*Soccer*\npnamera01 Champions League 17/09 Bayern Munich vs Chelsea both teams to score + over 2.5 goals - 1.82 5 units (same-game multiplier/bet builder) Inter Milan ML - 1.75 2 units Liverpool vs Atletico Madrid both teams not to score - 2.07 2 units Bayern Munich ML - 1.78 1 units PSG vs Atalanta both teams to score + Slavia Prague vs Bodo/Glimt both teams to score + Olympiacos ML - 4.00 1 units Liverpool vs Atletico Madrid under 3 goals - 1.82 1 units Correct scores: Liverpool vs Atletico Madrid 1-0 - 8.50 Bayern Munich vs Chelsea 2-1 -9.00 PSG vs Atalanta 2-1 - 8.00 Ajax Amsterdam vs Inter Milan 0-1 -9.50 (5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_123403_8512.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "Soccer",
+    "teams": [
+      {
+        "away": "Bayern Munich",
+        "home": "Chelsea both"
+      },
+      {
+        "away": "units Liverpool",
+        "home": "Atletico Madrid"
+      },
+      {
+        "away": "units PSG",
+        "home": "Atalanta both"
+      },
+      {
+        "away": "Slavia Prague",
+        "home": "Bodo"
+      },
+      {
+        "away": "units Liverpool",
+        "home": "Atletico Madrid"
+      },
+      {
+        "away": "Liverpool",
+        "home": "Atletico Madrid"
+      },
+      {
+        "away": "Bayern Munich",
+        "home": "Chelsea 2"
+      },
+      {
+        "away": "00 PSG",
+        "home": "Atalanta 2"
+      },
+      {
+        "away": "Ajax Amsterdam",
+        "home": "Inter Milan"
+      },
+      {
+        "away": "17",
+        "home": "09"
+      },
+      {
+        "away": "multiplier",
+        "home": "bet"
+      },
+      {
+        "away": "Bodo",
+        "home": "Glimt"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "pnamera01 Champions League 17/09 Bayern Munich vs Chelsea both teams to score + over 2.5 goals - 1.82 5 units (same-game multiplier/bet builder) Inter Milan ML - 1.75 2 units Liverpool vs Atletico Madrid both teams not to score - 2.07 2 units Bayern Munich ML - 1.78 1 units PSG vs Atalanta both teams to score + Slavia Prague vs Bodo/Glimt both teams to score + Olympiacos ML - 4.00 1 units Liverpool vs Atletico Madrid under 3 goals - 1.82 1 units Correct scores: Liverpool vs Atletico Madrid 1-0 - 8.50 Bayern Munich vs Chelsea 2-1 -9.00 PSG vs Atalanta 2-1 - 8.00 Ajax Amsterdam vs Inter Milan 0-1 -9.50",
+        "bet": "pnamera01 Champions League 17/09 Bayern Munich vs Chelsea both teams to score + over 2.5 goals - 1.82 5 units (same-game multiplier/bet builder) Inter Milan ML - 1.75 2 units Liverpool vs Atletico Madrid both teams not to score - 2.07 2 units Bayern Munich ML - 1.78 1 units PSG vs Atalanta both teams to score + Slavia Prague vs Bodo/Glimt both teams to score + Olympiacos ML - 4.00 1 units Liverpool vs Atletico Madrid under 3 goals - 1.82 1 units Correct scores: Liverpool vs Atletico Madrid 1-0 - 8.50 Bayern Munich vs Chelsea 2-1 -9.00 PSG vs Atalanta 2-1 - 8.00 Ajax Amsterdam vs Inter Milan 0-1 -9.50",
+        "odds": null,
+        "units": "5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

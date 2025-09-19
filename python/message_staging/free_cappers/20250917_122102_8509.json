@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-09-17T18:29:54.107Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n**Diamond**\n*MLB*",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8509.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [],
+    "capper": "Diamond",
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-09-17T18:29:48.022Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nBet Sharper Wednesdays Picks Grinding out edges in MLB isn't the sexiest thing but we will get hot soon and you'll see the profits roll in all at once! Straight Bets Only, No Parlays All Picks 1 Unit Use Bet Online for best MLB odds = Play of Day (same bet size as all others) MLB: Cardinals Moneyline () Royals Moneyline () Brewers/Angels U7.5 () Rangers Moneyline () +103 (1u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8505.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "Brewers",
+        "home": "Angels"
+      },
+      {
+        "away": "all",
+        "home": "once"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Bet Sharper Wednesdays Picks Grinding out edges in MLB isn't the sexiest thing but we will get hot soon and you'll see the profits roll in all at once! Straight Bets Only, No Parlays All Picks 1 Unit Use Bet Online for best MLB odds = Play of Day (same bet size as all others) MLB: Cardinals Moneyline (+103) Royals Moneyline (-120) Brewers/Angels U7.5 (-105) Rangers Moneyline (-125)",
+        "bet": "Bet Sharper Wednesdays Picks Grinding out edges in MLB isn't the sexiest thing but we will get hot soon and you'll see the profits roll in all at once! Straight Bets Only, No Parlays All Picks 1 Unit Use Bet Online for best MLB odds = Play of Day (same bet size as all others) MLB: Cardinals Moneyline () Royals Moneyline () Brewers/Angels U7.5 () Rangers Moneyline ()",
+        "odds": "+103",
+        "units": "1u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

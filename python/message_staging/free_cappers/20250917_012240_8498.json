@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-09-17T18:29:35.534Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nSPORTS PLAYS RBs Sports Plays KBO Lotto Bet Placed 4 Pick Parlay Doosan Bears Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM Hanwha Eagles Moneyline • • Hanwha Eagles @ KIA Tigers Today 5:30 AM Lotte Giants +1.5 Run Line Lotte Giants @ Samsung Lions Today 5:30 AM SSG Landers Moneyline • SSG Landers @ NC Dinos Today 2:00 AM • CASH OUT +641\n_Posted at 5:30 AM_",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8498.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [
+      {
+        "away": "Kiwoom Heroes",
+        "home": "Doosan Bears"
+      },
+      {
+        "away": "Hanwha Eagles",
+        "home": "KIA Tigers"
+      },
+      {
+        "away": "Lotte Giants",
+        "home": "Samsung Lions"
+      },
+      {
+        "away": "SSG Landers",
+        "home": "NC Dinos"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "SPORTS PLAYS RBs Sports Plays KBO Lotto Bet Placed 4 Pick Parlay Doosan Bears Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM Hanwha Eagles Moneyline • • Hanwha Eagles @ KIA Tigers Today 5:30 AM Lotte Giants +1.5 Run Line Lotte Giants @ Samsung Lions Today 5:30 AM SSG Landers Moneyline • SSG Landers @ NC Dinos Today 2:00 AM • CASH OUT +641",
+        "bet": "SPORTS PLAYS RBs Sports Plays KBO Lotto Bet Placed 4 Pick Parlay Doosan Bears Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM Hanwha Eagles Moneyline • • Hanwha Eagles @ KIA Tigers Today 5:30 AM Lotte Giants +1.5 Run Line Lotte Giants @ Samsung Lions Today 5:30 AM SSG Landers Moneyline • SSG Landers @ NC Dinos Today 2:00 AM • CASH OUT",
+        "odds": "+641",
+        "units": null,
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": "5:30 AM"
+  },
+  "sent_to_discord": false
+}

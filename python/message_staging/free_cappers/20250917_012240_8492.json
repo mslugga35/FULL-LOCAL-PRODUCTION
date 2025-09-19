@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:27.321Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*Tennis*\nPRBS Sports Plays Tennis Play Learner Tien ML (2 Units) HERBS Sports Plays SPORTS PLAYS Tennis Play Luca Nardi +2.5 (1 Unit) RR Bs Sports Plays SPORTS PLAYS Tennis Play Zizou Bergs ML (1 Unit) (2u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8492.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "Tennis",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "PRBS Sports Plays Tennis Play Learner Tien ML (2 Units) HERBS Sports Plays SPORTS PLAYS Tennis Play Luca Nardi +2.5 (1 Unit) RR Bs Sports Plays SPORTS PLAYS Tennis Play Zizou Bergs ML (1 Unit)",
+        "bet": "PRBS Sports Plays Tennis Play Learner Tien ML (2 Units) HERBS Sports Plays SPORTS PLAYS Tennis Play Luca Nardi +2.5 (1 Unit) RR Bs Sports Plays SPORTS PLAYS Tennis Play Zizou Bergs ML (1 Unit)",
+        "odds": null,
+        "units": "2u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

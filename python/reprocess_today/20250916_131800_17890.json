@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17890,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T13:18:00.784204",
+  "created_utc": 1758043080,
+  "media_file": "20250916_131800_17890.jpg",
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T17:18:05.101Z",
+  "ocr_text": "Bra Braves @ Nationals ( 1:05PM | Nationals Park WASH ย NATIO ONALS 1PM 2PM 3PM Drizzle Drizzle ? Cloudy 72° 72° 72° 67° 67° 68° 98% 100% 20% 11.9 mph 10.7 mph 10.6 mph ENE NNE DNNE Scroll right inside table for more data\" Wind Factors (In, Strong)",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T17:18:06.236Z"
+}

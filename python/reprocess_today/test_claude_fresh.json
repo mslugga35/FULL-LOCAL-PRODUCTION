@@ -1,0 +1,11 @@
+{
+  "source": "telegram",
+  "chat_title": "CAPPERS FREE",
+  "text": "",
+  "has_media": true,
+  "media_file": "test_image.jpg",
+  "needs_ocr": true,
+  "ocr_done": false,
+  "timestamp": "2025-09-16T15:45:00",
+  "routed_to": "free_cappers"
+}

@@ -1,0 +1,9 @@
+[2025-09-14T14-38-10-282Z] CONFIG AUDIT
+🆕 baseline: .env (93176867b5d2)
+🆕 baseline: discord_sender.js (53ea7cc6a840)
+🆕 baseline: forwarder.py (b4dc3e0cc7fc)
+🆕 baseline: telegram_to_discord.py (5b150250cd64)
+🆕 baseline: message_router.js (81ffc65b0765)
+❌ missing: /root/bots/ocr_processor.js
+🆕 baseline: paid_webhook_sender.js (f4f75c828fc1)
+🆕 baseline: watchdog-pro.js (03d92ee1690b)

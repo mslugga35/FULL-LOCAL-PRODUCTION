@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""
+UNIVERSAL TELEGRAM CAPTURE - Handles ANY message type, ANY file type
+Captures everything and sends summary to validation number
+"""
+import os
+import sys
+import asyncio
+import json
+import time
+from telethon import TelegramClient, events
+from telethon.sessions import StringSession
+from datetime import datetime
+
+# Force UTF-8
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Configuration
+SESSION_STRING = "1AQAOMTQ5LjE1NC4xNzUuNTcBu2g+yaG4eWVh5epPtcgWfQTPkqasIdvsxCj68U7clUx9mn3LsVTRIXr/0xJoWABsu/2Khznce7EyhPh0wMw4aFTKllNmUA+iJsGib4sQfpd5dMcg0Ua3BR9JCx596L7qNzAhSda7R2grZFv5cnyx5oT39iXIA3edgHUpf0n+0XwfFFwK8oIqoJgPvoThCpwPit2iCXGM1LERLzssLErvGYzUeAklhKBvle3OJJRFPz4GQIkSRiVQLutLHHXUh3uLws7Pauq/fuhTbd8KxQ5987wcrXlwGI7iUOskQkc+vGlDuXUr3pgbsRHZ5qnIycCnWE3GhO/ns5OtXvJ8PbvkMjQ="
+INBOX = "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\inbox"
+VALIDATION_NUMBER = "+3212629156"
+api_id = 29479443
+api_hash = "e3a7a7226cf446bbfd5366f7da75cdfa"
+
+# Create directories
+os.makedirs(INBOX, exist_ok=True)
+os.makedirs(os.path.join(INBOX, "media"), exist_ok=True)
+
+client = TelegramClient(StringSession(SESSION_STRING), api_id, api_hash)
+
+def safe_print(msg):
+    try:
+        print(msg, flush=True)
+    except:
+        print(msg.encode('ascii', 'replace').decode('ascii'), flush=True)
+
+captured_messages = []
+
+@client.on(events.NewMessage())
+async def universal_capture(event):
+    """Capture ANY message from ANY source with ANY file type"""
+    global captured_messages
+
+    try:
+        # Get source information
+        if event.is_private:
+            source = f"Private_{event.sender_id}"
+            source_type = "private"
+        else:
+            chat = await event.get_chat()
+            source = getattr(chat, 'title', f"Chat_{chat.id}")
+            source_type = "group/channel"
+
+        # Message details
+        message_text = event.message.message or "[no text]"
+        message_id = event.message.id
+        timestamp = datetime.now()
+
+        safe_print(f"\n🔥 CAPTURED: {source}")
+        safe_print(f"📝 Text: {message_text[:100]}...")
+
+        # Initialize message data
+        msg_data = {
+            "timestamp": timestamp.isoformat(),
+            "source": source,
+            "source_type": source_type,
+            "message_id": message_id,
+            "text": message_text,
+            "media_type": None,
+            "media_info": {},
+            "files_saved": []
+        }
+
+        # Handle ALL media types
+        if event.message.media:
+            try:
+                media_folder = os.path.join(INBOX, "media")
+                base_filename = f"{timestamp.strftime('%Y%m%d_%H%M%S')}_{message_id}"
+
+                # Photo
+                if event.message.photo:
+                    safe_print("📸 Photo detected")
+                    msg_data["media_type"] = "photo"
+                    photo_path = os.path.join(media_folder, f"{base_filename}.jpg")
+                    downloaded = await event.message.download_media(file=photo_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"💾 Photo saved: {os.path.basename(downloaded)}")
+
+                # Document (ANY file type)
+                elif event.message.document:
+                    doc = event.message.document
+                    mime_type = getattr(doc, 'mime_type', 'unknown')
+                    file_name = None
+
+                    # Try to get original filename
+                    for attr in doc.attributes:
+                        if hasattr(attr, 'file_name'):
+                            file_name = attr.file_name
+                            break
+
+                    if not file_name:
+                        # Generate filename based on mime type
+                        ext_map = {
+                            'image/jpeg': '.jpg',
+                            'image/png': '.png',
+                            'image/gif': '.gif',
+                            'video/mp4': '.mp4',
+                            'audio/mpeg': '.mp3',
+                            'application/pdf': '.pdf',
+                            'text/plain': '.txt'
+                        }
+                        ext = ext_map.get(mime_type, '.bin')
+                        file_name = f"{base_filename}{ext}"
+
+                    safe_print(f"📎 Document: {file_name} ({mime_type})")
+                    msg_data["media_type"] = "document"
+                    msg_data["media_info"] = {
+                        "filename": file_name,
+                        "mime_type": mime_type,
+                        "size": doc.size
+                    }
+
+                    # Download the file
+                    doc_path = os.path.join(media_folder, file_name)
+                    downloaded = await event.message.download_media(file=doc_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"💾 File saved: {os.path.basename(downloaded)}")
+
+                # Video
+                elif event.message.video:
+                    safe_print("🎥 Video detected")
+                    msg_data["media_type"] = "video"
+                    video_path = os.path.join(media_folder, f"{base_filename}.mp4")
+                    downloaded = await event.message.download_media(file=video_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"💾 Video saved: {os.path.basename(downloaded)}")
+
+                # Audio/Voice
+                elif event.message.audio or event.message.voice:
+                    safe_print("🎵 Audio detected")
+                    msg_data["media_type"] = "audio"
+                    audio_path = os.path.join(media_folder, f"{base_filename}.mp3")
+                    downloaded = await event.message.download_media(file=audio_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"💾 Audio saved: {os.path.basename(downloaded)}")
+
+                # Sticker
+                elif event.message.sticker:
+                    safe_print("🎭 Sticker detected")
+                    msg_data["media_type"] = "sticker"
+                    sticker_path = os.path.join(media_folder, f"{base_filename}_sticker.webp")
+                    downloaded = await event.message.download_media(file=sticker_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"💾 Sticker saved: {os.path.basename(downloaded)}")
+
+            except Exception as e:
+                safe_print(f"❌ Media download failed: {e}")
+
+        # Save message metadata
+        json_path = os.path.join(INBOX, f"{timestamp.strftime('%Y%m%d_%H%M%S')}_{source.replace(' ', '_')}_{message_id}.json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(msg_data, f, ensure_ascii=False, indent=2)
+
+        # Add to captured list for summary
+        captured_messages.append(msg_data)
+
+        # Send periodic summary every 5 messages
+        if len(captured_messages) % 5 == 0:
+            await send_summary()
+
+        safe_print(f"✅ Message captured and saved")
+
+    except Exception as e:
+        safe_print(f"❌ Capture failed: {e}")
+
+async def send_summary():
+    """Send summary of captured messages"""
+    global captured_messages
+
+    if not captured_messages:
+        return
+
+    try:
+        summary = f"🔥 TELEGRAM CAPTURE SUMMARY ({len(captured_messages)} messages)\n\n"
+
+        for msg in captured_messages[-5:]:  # Last 5 messages
+            summary += f"📍 {msg['source']}\n"
+            summary += f"📝 {msg['text'][:100]}...\n"
+            if msg['files_saved']:
+                summary += f"📎 Files: {', '.join(msg['files_saved'])}\n"
+            summary += f"⏰ {msg['timestamp'][:19]}\n\n"
+
+        await client.send_message(VALIDATION_NUMBER, summary)
+        safe_print(f"📱 Summary sent to {VALIDATION_NUMBER}")
+
+    except Exception as e:
+        safe_print(f"❌ Failed to send summary: {e}")
+
+async def main():
+    """Main function"""
+    global captured_messages
+
+    safe_print("=" * 70)
+    safe_print("🔥 UNIVERSAL TELEGRAM CAPTURE")
+    safe_print("📱 Captures ANY message, ANY file from ANY source")
+    safe_print("=" * 70)
+
+    await client.start()
+    me = await client.get_me()
+    safe_print(f"✅ Connected as: {me.first_name} (@{me.username})")
+
+    # Show accessible chats
+    safe_print("\n📋 Accessible chats:")
+    count = 0
+    async for dialog in client.iter_dialogs(limit=10):
+        count += 1
+        safe_print(f"  {count}. {dialog.name}")
+
+    safe_print(f"\n🎯 Monitoring ALL messages from {count}+ sources")
+    safe_print(f"📁 Saving to: {INBOX}")
+    safe_print(f"📱 Validation reports to: {VALIDATION_NUMBER}")
+    safe_print("=" * 70)
+
+    try:
+        await client.run_until_disconnected()
+    except KeyboardInterrupt:
+        # Send final summary before exit
+        if captured_messages:
+            await send_summary()
+        safe_print("\n🛑 Stopped by user")
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        safe_print(f"💥 Fatal error: {e}")

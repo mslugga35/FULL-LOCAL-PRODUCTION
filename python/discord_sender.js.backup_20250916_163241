@@ -1,0 +1,295 @@
+/**
+ * Discord Pass-Through Sender
+ * Simply forwards everything from Telegram to Discord as-is
+ * A separate processor can enhance messages later
+ */
+
+require('dotenv').config();
+const Discord = require('discord.js');
+const fs = require('fs').promises;
+const path = require('path');
+
+const CONFIG = {
+  discord: {
+    token: process.env.DISCORD_OCR_BOT_TOKEN,
+    channels: {
+      // Server 1390050801136701642 - Free/Leaked/Exclusive channels
+      free_cappers: "1403894557615325216",
+      leaked_cappers: "1403894596186017962",
+      exclusive_cappers: "1403894653660692500",
+
+      // Server 675908407617650697 - UATB/Diamond/Paid channels
+      uatb_diamond: "1403837637730762875",
+      paid_cappers: "1403837637730762875",
+
+      // Sports channels
+      sports: "1403894557615325216"
+    }
+  },
+  queueDir: '/root/bots/message_queue',
+  processedDir: '/root/bots/message_queue/processed',
+  checkInterval: 2000
+};
+
+// Simple folder mapping
+const FOLDER_MAPPING = {
+  'free_cappers': { channel: 'free_cappers', label: '📢 Free' },
+  'leaked_cappers': { channel: 'leaked_cappers', label: '🔓 Leaked' },
+  'exclusive_cappers': { channel: 'exclusive_cappers', label: '⭐ Exclusive' },
+  'paid_uatb': { channel: 'uatb_diamond', label: '🌐 UATB 🌐' },
+  'paid_diamond': { channel: 'uatb_diamond', label: '💎 Chamba 💎' },
+  'paid_chamba': { channel: 'uatb_diamond', label: '💎 Chamba 💎' },
+  'paid_cappers': { channel: 'paid_cappers', label: '💰 Paid' },
+  'sports_porter': { channel: 'sports', label: '⚽ Sports' },
+  'sports_buster': { channel: 'sports', label: '🏀 Sports' },
+  'sports_junk': { channel: 'sports', label: '🏈 Sports' }
+};
+
+class PassThroughSender {
+  constructor() {
+    this.client = new Discord.Client({
+      intents: [
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildMessages,
+        Discord.GatewayIntentBits.MessageContent
+      ]
+    });
+    this.isReady = false;
+  }
+
+  async init() {
+    this.client.once('ready', () => {
+      console.log('[OK] Discord connected as:', this.client.user.tag);
+      this.isReady = true;
+    });
+
+    this.client.on('error', (error) => {
+      console.error('[ERROR] Discord client error:', error);
+    });
+
+    try {
+      await this.client.login(CONFIG.discord.token);
+      console.log('[OK] Discord login successful');
+    } catch (error) {
+      console.error('[ERROR] Failed to login to Discord:', error.message);
+      process.exit(1);
+    }
+
+    while (!this.isReady) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  async sendToDiscord(channelId, content, imagePath = null) {
+    try {
+      const channel = await this.client.channels.fetch(channelId);
+      if (!channel) {
+        console.log(`[ERROR] Channel ${channelId} not found`);
+        return false;
+      }
+
+      const messagePayload = { content: content };
+
+      // For paid channels, attach images
+      const isPaidChannel = channelId === "1403837637730762875";
+      if (isPaidChannel && imagePath) {
+        try {
+          const stats = await fs.stat(imagePath);
+          if (stats.isFile()) {
+            const attachment = new Discord.AttachmentBuilder(imagePath);
+            messagePayload.files = [attachment];
+            console.log(`[ATTACH] Image: ${path.basename(imagePath)}`);
+          }
+        } catch (err) {
+          // Silently skip if image not found
+        }
+      }
+
+      await channel.send(messagePayload);
+      console.log(`[SENT] to ${channelId}`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Rate limit
+      return true;
+
+    } catch (error) {
+      console.error('[ERROR] Send failed:', error.message);
+      return false;
+    }
+  }
+
+  async processMessage(folderName, fileName) {
+    const filePath = path.join(CONFIG.queueDir, folderName, fileName);
+
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      const msg = JSON.parse(content);
+
+      const mapping = FOLDER_MAPPING[folderName];
+      if (!mapping) {
+        console.log(`[SKIP] No mapping for: ${folderName}`);
+        return;
+      }
+
+      const channelId = CONFIG.discord.channels[mapping.channel];
+      if (!channelId) {
+        console.log(`[SKIP] No channel for: ${mapping.channel}`);
+        return;
+      }
+
+      // Check if this is a paid channel
+      const isPaidFolder = ['paid_uatb', 'paid_diamond', 'paid_chamba'].includes(folderName);
+
+      let message = '';
+
+      if (isPaidFolder) {
+        // PAID CHANNELS: Send EXACTLY as-is from Telegram
+        message = `**${mapping.label}**\n`;
+
+        // Use whatever text is available, prioritizing caption for images
+        if (msg.caption && msg.caption.trim()) {
+          message += msg.caption;
+        } else if (msg.text && msg.text.trim()) {
+          message += msg.text;
+        } else if (msg.ocr_text) {
+          message += msg.ocr_text;
+        } else if (msg.has_media) {
+          message += '📸 *[Image]*';
+        } else {
+          console.log('[SKIP] No content');
+          return;
+        }
+      } else {
+        // FREE/LEAKED: Format nicely with OCR text
+        message = `**${mapping.label}**\n`;
+
+        // For free/leaked, format the OCR text better
+        if (msg.ocr_text) {
+          // Extract capper name and format picks
+          let formatted = msg.ocr_text;
+
+          // Try to extract capper name
+          const capperMatch = formatted.match(/^([A-Z][a-z]+(?:[A-Z][a-z]+)*)|@(\w+)/);
+          if (capperMatch) {
+            const capperName = capperMatch[1] || capperMatch[2];
+            message += `**Capper: ${capperName}**\n`;
+            message += '━━━━━━━━━\n';
+          }
+
+          // Format the picks with line breaks
+          formatted = formatted
+            .replace(/(\d+U\))/g, '$1\n')
+            .replace(/(✅|❌)/g, '\n$1')
+            .replace(/\s{2,}/g, '\n');
+
+          message += formatted;
+        } else if (msg.caption || msg.text) {
+          message += msg.caption || msg.text;
+        } else if (msg.has_media) {
+          message += '📸 *[Image]*';
+        } else {
+          console.log('[SKIP] No content');
+          return;
+        }
+      }
+
+      // Truncate if needed
+      if (message.length > 1900) {
+        message = message.substring(0, 1897) + '...';
+      }
+
+      // Find image if exists (for paid channels)
+      let imagePath = null;
+      if (msg.has_media && msg.media_file) {
+        imagePath = path.join(CONFIG.queueDir, folderName, msg.media_file);
+        try {
+          await fs.stat(imagePath);
+        } catch {
+          imagePath = path.join(CONFIG.processedDir, folderName, msg.media_file);
+        }
+      }
+
+      // Send to Discord
+      const success = await this.sendToDiscord(channelId, message, imagePath);
+
+      if (success) {
+        // Move to processed (but keep in staging for enhancer)
+        const processedPath = path.join(CONFIG.processedDir, folderName);
+        await fs.mkdir(processedPath, { recursive: true });
+
+        // Copy to staging for enhancement
+        const stagingPath = path.join('/root/bots/message_staging', folderName);
+        await fs.mkdir(stagingPath, { recursive: true });
+        await fs.copyFile(filePath, path.join(stagingPath, fileName));
+
+        // Move original to processed
+        await fs.rename(filePath, path.join(processedPath, fileName));
+
+        // Move image if exists
+        if (msg.media_file) {
+          try {
+            const srcImg = path.join(CONFIG.queueDir, folderName, msg.media_file);
+            const dstImg = path.join(processedPath, msg.media_file);
+            await fs.rename(srcImg, dstImg);
+          } catch {
+            // Image might already be moved
+          }
+        }
+
+        console.log(`[DONE] ${folderName}/${fileName}`);
+      }
+
+    } catch (error) {
+      console.error(`[ERROR] ${folderName}/${fileName}:`, error.message);
+    }
+  }
+
+  async scanQueues() {
+    try {
+      const folders = await fs.readdir(CONFIG.queueDir);
+
+      for (const folder of folders) {
+        if (folder === 'processed' || folder.startsWith('.') ||
+            folder.startsWith('old_') || folder.startsWith('processed_')) {
+          continue;
+        }
+
+        const folderPath = path.join(CONFIG.queueDir, folder);
+        const stats = await fs.stat(folderPath);
+
+        if (!stats.isDirectory()) {
+          continue;
+        }
+
+        const files = await fs.readdir(folderPath);
+        const jsonFiles = files.filter(f => f.endsWith('.json'));
+
+        if (jsonFiles.length > 0) {
+          console.log(`[QUEUE] ${jsonFiles.length} in ${folder}`);
+          for (const file of jsonFiles) {
+            await this.processMessage(folder, file);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('[ERROR] Scan failed:', error.message);
+    }
+  }
+
+  async start() {
+    console.log('[START] Pass-Through Sender');
+    console.log('[INFO] Messages go to staging for enhancement');
+
+    await this.init();
+
+    while (true) {
+      await this.scanQueues();
+      await new Promise(resolve => setTimeout(resolve, CONFIG.checkInterval));
+    }
+  }
+}
+
+// Start the service
+const sender = new PassThroughSender();
+sender.start().catch(error => {
+  console.error('[FATAL]', error);
+  process.exit(1);
+});

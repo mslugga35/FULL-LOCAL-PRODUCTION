@@ -1,0 +1,52 @@
+{
+  "timestamp": "2025-09-17T18:29:56.729Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\n99 PORTER 9:30 29 ****pperse #mlb> Porter Picks 9:25 AM EARLY MLB SELECTION for WEDNESDAY (day baseball) @persiree sfree/sfree CUBS/PIRATES UNDER 7.5 () @ (2-U1 (2-UNITS) $ 9:35am PST persfree The TOTAL has gone UNDER in 5 of the CUBS last 5 games on the ROAD! @Th The TOTAL has gone UNDER in 8 of the PIRATES last 9 games against the CUBS! UMPIRE Charlie Ramos is a solid 7-16 to the OVER/ UNDER this season, most importantly, 0-2 to the OVER/UNDER when the TOTAL is set at 7.5 or lower this season! @superstree @ MORE to be posted shortly! 5 4 100 4 4 4 oneee 4 Done reading? Check out other channels. -105\n_Posted at 9:30 _",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_123202_11573.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "superstree",
+        "home": "MORE to"
+      },
+      {
+        "away": "sfree",
+        "home": "sfree"
+      },
+      {
+        "away": "CUBS",
+        "home": "PIRATES"
+      },
+      {
+        "away": "OVER",
+        "home": "UNDER"
+      },
+      {
+        "away": "OVER",
+        "home": "UNDER"
+      },
+      {
+        "away": "set",
+        "home": "7"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "99 PORTER 9:30 29 ****pperse #mlb> Porter Picks 9:25 AM EARLY MLB SELECTION for WEDNESDAY (day baseball) @persiree sfree/sfree CUBS/PIRATES UNDER 7.5 (-105) @ (2-U1 (2-UNITS) $ 9:35am PST persfree The TOTAL has gone UNDER in 5 of the CUBS last 5 games on the ROAD! @Th The TOTAL has gone UNDER in 8 of the PIRATES last 9 games against the CUBS! UMPIRE Charlie Ramos is a solid 7-16 to the OVER/ UNDER this season, most importantly, 0-2 to the OVER/UNDER when the TOTAL is set at 7.5 or lower this season! @superstree @ MORE to be posted shortly! 5 4 100 4 4 4 oneee 4 Done reading? Check out other channels.",
+        "bet": "99 PORTER 9:30 29 ****pperse #mlb> Porter Picks 9:25 AM EARLY MLB SELECTION for WEDNESDAY (day baseball) @persiree sfree/sfree CUBS/PIRATES UNDER 7.5 () @ (2-U1 (2-UNITS) $ 9:35am PST persfree The TOTAL has gone UNDER in 5 of the CUBS last 5 games on the ROAD! @Th The TOTAL has gone UNDER in 8 of the PIRATES last 9 games against the CUBS! UMPIRE Charlie Ramos is a solid 7-16 to the OVER/ UNDER this season, most importantly, 0-2 to the OVER/UNDER when the TOTAL is set at 7.5 or lower this season! @superstree @ MORE to be posted shortly! 5 4 100 4 4 4 oneee 4 Done reading? Check out other channels.",
+        "odds": "-105",
+        "units": null,
+        "type": "total"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": "9:30 "
+  },
+  "sent_to_discord": false
+}

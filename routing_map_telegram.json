@@ -1,0 +1,48 @@
+{
+  "description": "Telegram channel routing configuration",
+  "updated": "2025-09-18",
+  "watchlist": [
+    -1002177758646,
+    -1002470080886,
+    -1002592669126,
+    -1001560546587,
+    -1002608783933
+  ],
+  "routes": {
+    "-1002177758646": {
+      "name": "UATB",
+      "queue": "paid_uatb",
+      "discord_channel": "1403837637730762875",
+      "discord_name": "paid-messages",
+      "transport": "webhook"
+    },
+    "-1002470080886": {
+      "name": "Diamond/Chamba",
+      "queue": "paid_diamond",
+      "discord_channel": "1403837637730762875",
+      "discord_name": "paid-messages",
+      "transport": "webhook"
+    },
+    "-1002592669126": {
+      "name": "Cappers Free",
+      "queue": "free_cappers",
+      "discord_channel": "1403894557615325216",
+      "discord_name": "cappers-free-leaks",
+      "transport": "bot"
+    },
+    "-1001560546587": {
+      "name": "Cappers Leaked",
+      "queue": "cappers_leaked",
+      "discord_channel": "1403894596186017962",
+      "discord_name": "cappers-leaked",
+      "transport": "bot"
+    },
+    "-1002608783933": {
+      "name": "Exclusive Cappers",
+      "queue": "exclusive_cappers",
+      "discord_channel": "1403894653660692500",
+      "discord_name": "exclusive-cappers",
+      "transport": "bot"
+    }
+  }
+}

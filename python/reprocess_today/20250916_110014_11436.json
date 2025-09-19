@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2592669126,
+  "chat_title": "CAPPERS FREE💥",
+  "chat_username": null,
+  "message_id": 11436,
+  "text": "LAFORMULA - ✅",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T11:00:14.430373",
+  "created_utc": 1758034814,
+  "media_file": "20250916_110013_11436.jpg",
+  "routed_from": "inbox",
+  "routed_to": "free_cappers",
+  "routed_at": "2025-09-16T15:00:18.747Z",
+  "ocr_text": "Exclusive Playappersfree Phillies vs Dodgers Over 7.5",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T15:00:20.346Z"
+}

@@ -1,0 +1,36 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2608783933,
+  "chat_title": "👑 Exclusive Cappers 👑",
+  "chat_username": null,
+  "message_id": 1310,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": true,
+  "timestamp": "2025-09-17T15:59:32.480665",
+  "created_utc": 1758139172,
+  "media_file": "20250917_155932_1310_media.jpg",
+  "ocr_text": "🔥 **LOCK** 🔥\n*NHL*\n9 vs 17\n_Posted at 2:49 PM_",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-17T19:59:38.456Z",
+  "ocr_method": "claude",
+  "ocr_raw": "Active\nSettled\n2:49 PM 9/17/2025\nWinner (Incl. Extra Innings)\nTexas Rangers\nOdds\nStake\nEst. Payout\n00\n1.77\nStake\n$13,275.00 B\n75-21 exclusive capper\nlocked in\n7PM EST START TIME",
+  "ocr_processor": "google_vision",
+  "betting_info": {
+    "sport": "NHL",
+    "teams": [
+      {
+        "away": "9",
+        "home": "17"
+      }
+    ],
+    "picks": [],
+    "capper": null,
+    "confidence": "LOCK",
+    "timestamp": "2:49 PM"
+  },
+  "formatter_version": "google_vision_v1",
+  "ocr_timestamp": "2025-09-17T19:59:39.292Z"
+}

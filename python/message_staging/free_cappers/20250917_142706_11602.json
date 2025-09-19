@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:30:08.757Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n**VIP**\n*MLB*\nSean Perry Wins VIP Clients MLB appersfree Perry Wins VIP Clients e cappersfreesfree Orioles ML Giants ML 21:23 PM -122\n_Posted at 21:23 PM_",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_142706_11602.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "Sean Perry Wins VIP Clients MLB appersfree Perry Wins VIP Clients e cappersfreesfree Orioles ML-122 Giants ML -122 21:23 PM",
+        "bet": "Sean Perry Wins VIP Clients MLB appersfree Perry Wins VIP Clients e cappersfreesfree Orioles ML Giants ML 21:23 PM",
+        "odds": "-122",
+        "units": null,
+        "type": "moneyline"
+      }
+    ],
+    "capper": "VIP",
+    "confidence": null,
+    "timestamp": "21:23 PM"
+  },
+  "sent_to_discord": false
+}

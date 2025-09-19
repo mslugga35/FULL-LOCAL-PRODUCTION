@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:36.721Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nA11 Bets All BETS KBO FULL CARD Dinos ML () 1 units Dinos F5 +0.5 () 0.75 units Lotte F5 +0.5 () 0.75 units Lotte ML () 0.5 units +105 (1u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8499.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "A11 Bets All BETS KBO FULL CARD Dinos ML (+105) 1 units Dinos F5 +0.5 (-148) 0.75 units Lotte F5 +0.5 (-116) 0.75 units Lotte ML (+125) 0.5 units",
+        "bet": "A11 Bets All BETS KBO FULL CARD Dinos ML () 1 units Dinos F5 +0.5 () 0.75 units Lotte F5 +0.5 () 0.75 units Lotte ML () 0.5 units",
+        "odds": "+105",
+        "units": "1u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

@@ -1,0 +1,33 @@
+{
+  "poll_seconds": 30,
+  "max_allowed_lag_seconds": 180,
+  "pm2_processes_to_heal": ["tg-producer","message-router","ocr-processor","discord-sender"],
+  "admin_alert_webhook": "https://discord.com/api/webhooks/1403837691807924294/_wwVsXOAldM4mPDxltGipB0eYYNBlkDZJzG0x6jWEbwSiGUeuUOfI3Y858YY9MYEQ8GN",
+  "channels": [
+    {
+      "tg_username": "-1002592669126",
+      "discord_channel_id": "1403894557615325216",
+      "label": "free_cappers"
+    },
+    {
+      "tg_username": "-1001560546587",
+      "discord_channel_id": "1403894596186017962",
+      "label": "leaked_cappers"
+    },
+    {
+      "tg_username": "-1002608783933",
+      "discord_channel_id": "1403894653660692500",
+      "label": "exclusive_cappers"
+    },
+    {
+      "tg_username": "-1002177758646",
+      "discord_channel_id": "1403837637730762875",
+      "label": "paid_uatb"
+    },
+    {
+      "tg_username": "-1002470080886",
+      "discord_channel_id": "1403837637730762875",
+      "label": "paid_diamond"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2592669126,
+  "chat_title": "CAPPERS FREE💥",
+  "chat_username": null,
+  "message_id": 11437,
+  "text": "EXCLUSIVE PLAY - ✅",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T11:00:14.511931",
+  "created_utc": 1758034814,
+  "media_file": "20250916_110013_11437.jpg",
+  "routed_from": "inbox",
+  "routed_to": "free_cappers",
+  "routed_at": "2025-09-16T15:00:18.749Z",
+  "ocr_text": "EXCLUSIVE PLAY free MLB cappersfreesfree CUBS ML ☑esfree",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T15:00:20.724Z"
+}

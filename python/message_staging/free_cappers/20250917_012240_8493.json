@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:28.704Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*Tennis*\nCard Tennis LEARLOCKS Seoul (SAME CARD DONT REBET) Lamens ML/ cirstea ML Diana Shnaider ML HANGZHOU Lucas Nardi ML Chengdu Marcus Giron ML +105 (1.5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8493.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "Tennis",
+    "teams": [
+      {
+        "away": "ML",
+        "home": "cirstea"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Card Tennis LEARLOCKS Seoul (SAME CARD DONT REBET) Lamens ML/ cirstea ML 1.5u +105 Diana Shnaider ML -146 1.5u HANGZHOU Lucas Nardi ML +110 1.5u Chengdu Marcus Giron ML -120 1.5u",
+        "bet": "Card Tennis LEARLOCKS Seoul (SAME CARD DONT REBET) Lamens ML/ cirstea ML Diana Shnaider ML HANGZHOU Lucas Nardi ML Chengdu Marcus Giron ML",
+        "odds": "+105",
+        "units": "1.5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

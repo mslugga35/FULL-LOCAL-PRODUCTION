@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-09-17T18:29:49.491Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nMr Big Bets 9/17 mlb plays Blue Jays ML Cubs/Pirates units 8 Rangers ML Just 3 straight bets for today. All other content will be in discord as always Blue jays have a great spot tonight. Kevin Gausman is throwing as well as he has all year. The Blue jays are running away with the division again. Great spot to take advantage of a good price on their ML. cubs and pirates under this afternoon is a good look as well. We unfortunately saw some runs early on yesterday which killed my 1st 5 under but that was a very low scoring game overall. We are seeing competitive pitching today, I'm expecting a similar outcome Rangers ML over the Astros is a no brainer right now. Javier can be a great pitcher, but he's not right now. Degrom has had a great season and I trust him to go on the road and give us a chance to win this bet vs (in my opinion) a pretty average astros lineup as it stands right now. -130 (2u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8506.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "9",
+        "home": "17"
+      },
+      {
+        "away": "Cubs",
+        "home": "Pirates"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Mr Big Bets 9/17 mlb plays Blue Jays ML -130 2u Cubs/Pirates units 8 -115 1u Rangers ML-126 1u Just 3 straight bets for today. All other content will be in discord as always Blue jays have a great spot tonight. Kevin Gausman is throwing as well as he has all year. The Blue jays are running away with the division again. Great spot to take advantage of a good price on their ML. cubs and pirates under this afternoon is a good look as well. We unfortunately saw some runs early on yesterday which killed my 1st 5 under but that was a very low scoring game overall. We are seeing competitive pitching today, I'm expecting a similar outcome Rangers ML over the Astros is a no brainer right now. Javier can be a great pitcher, but he's not right now. Degrom has had a great season and I trust him to go on the road and give us a chance to win this bet vs (in my opinion) a pretty average astros lineup as it stands right now.",
+        "bet": "Mr Big Bets 9/17 mlb plays Blue Jays ML Cubs/Pirates units 8 Rangers ML Just 3 straight bets for today. All other content will be in discord as always Blue jays have a great spot tonight. Kevin Gausman is throwing as well as he has all year. The Blue jays are running away with the division again. Great spot to take advantage of a good price on their ML. cubs and pirates under this afternoon is a good look as well. We unfortunately saw some runs early on yesterday which killed my 1st 5 under but that was a very low scoring game overall. We are seeing competitive pitching today, I'm expecting a similar outcome Rangers ML over the Astros is a no brainer right now. Javier can be a great pitcher, but he's not right now. Degrom has had a great season and I trust him to go on the road and give us a chance to win this bet vs (in my opinion) a pretty average astros lineup as it stands right now.",
+        "odds": "-130",
+        "units": "2u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

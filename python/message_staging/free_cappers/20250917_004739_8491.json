@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-09-17T18:29:25.958Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **MAX** 🔥",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_004739_8491.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [],
+    "capper": null,
+    "confidence": "MAX",
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

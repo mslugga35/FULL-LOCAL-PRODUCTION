@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 1560546587,
+  "chat_title": "Cappers leaked ‼️",
+  "chat_username": "Cappersleaked1",
+  "message_id": 8474,
+  "text": "KBO CAPPERS ⚾ \n\nA11Bets (9-1)\nBankrollbill\nKimsPicks",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T01:21:50.548790",
+  "created_utc": 1758000110,
+  "media_file": "20250916_012149_8474.jpg",
+  "routed_from": "inbox",
+  "routed_to": "leaked_cappers",
+  "routed_at": "2025-09-16T05:21:53.919Z",
+  "ocr_text": "KimsPicks KBO CARD Samsung Lions F5 -0.5 (0.5U) SSG Landers ml (0.5U)",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T05:21:54.771Z"
+}

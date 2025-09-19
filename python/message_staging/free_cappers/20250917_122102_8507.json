@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:50.691Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **HAMMER** 🔥\n*Soccer*\nHammering Hank HAMMERING HAME SOCCER Olympiakos Paphos FC BTTS - Yes 2 units PSG / Atalanta BTTS - NO 2 units BTTS = Both Teams To Score +100 (2u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8507.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "Soccer",
+    "teams": [
+      {
+        "away": "PSG",
+        "home": "Atalanta"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Hammering Hank HAMMERING HAME SOCCER Olympiakos Paphos FC BTTS - Yes +100 2 units PSG / Atalanta BTTS - NO +110 2 units BTTS = Both Teams To Score",
+        "bet": "Hammering Hank HAMMERING HAME SOCCER Olympiakos Paphos FC BTTS - Yes 2 units PSG / Atalanta BTTS - NO 2 units BTTS = Both Teams To Score",
+        "odds": "+100",
+        "units": "2u",
+        "type": null
+      }
+    ],
+    "capper": null,
+    "confidence": "HAMMER",
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

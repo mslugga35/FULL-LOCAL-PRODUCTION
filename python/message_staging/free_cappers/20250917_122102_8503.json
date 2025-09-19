@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:45.564Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nMatthewp07 MLB/WNBA Plays Mix & Match: Jack Flaherty over 15.5 outs David Peterson under 4.5 strikeouts Alyssa Thomas over 14.5 points Courtney Williams over 12.5 points Let's get it These should all be widely available, currently the best multipliers on chalkboard of the DFS apps. Also showing good odds on Novig. As always line shop for best value available to you",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8503.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "MLB",
+        "home": "WNBA"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Matthewp07 MLB/WNBA Plays Mix & Match: Jack Flaherty over 15.5 outs David Peterson under 4.5 strikeouts Alyssa Thomas over 14.5 points Courtney Williams over 12.5 points Let's get it These should all be widely available, currently the best multipliers on chalkboard of the DFS apps. Also showing good odds on Novig. As always line shop for best value available to you",
+        "bet": "Matthewp07 MLB/WNBA Plays Mix & Match: Jack Flaherty over 15.5 outs David Peterson under 4.5 strikeouts Alyssa Thomas over 14.5 points Courtney Williams over 12.5 points Let's get it These should all be widely available, currently the best multipliers on chalkboard of the DFS apps. Also showing good odds on Novig. As always line shop for best value available to you",
+        "odds": null,
+        "units": null,
+        "type": "spread"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

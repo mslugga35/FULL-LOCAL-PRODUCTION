@@ -1,0 +1,23 @@
+paid_uatb:
+  transport: bot
+  channel_id: 1403837637730762875
+
+paid_diamond:
+  transport: bot
+  channel_id: 1403837637730762875
+
+free_cappers:
+  transport: bot
+  channel_id: 1403894557615325216
+
+cappers_leaked:
+  transport: bot
+  channel_id: 1403894596186017962
+
+exclusive_cappers:
+  transport: bot
+  channel_id: 1403894653660692500
+
+signal_picks:
+  transport: signal
+  recipient_id: YOUR_SIGNAL_GROUP_ID  # Replace with your Signal group ID

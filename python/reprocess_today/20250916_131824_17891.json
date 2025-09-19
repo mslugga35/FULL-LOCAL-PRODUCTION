@@ -1,0 +1,16 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17891,
+  "text": "12 MPH winds blowing in super strong HRs will not be hit today in that ballpark",
+  "has_media": false,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T13:18:24.060423",
+  "created_utc": 1758043104,
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T17:18:25.107Z"
+}

@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:31.313Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nSet Point Bets Add Shang ML @1.81 4 units Budkov Kjaer ML @2.2 3 units Wu ML @1.82 2.5 units Zeppieri ML @1.72 2 units Halys ML @2.01 2 units Yi Zhou +4.5 @1.80 2 units Nardi ML @2.11 1 units (4u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8495.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "Set Point Bets Add Shang ML @1.81 4 units Budkov Kjaer ML @2.2 3 units Wu ML @1.82 2.5 units Zeppieri ML @1.72 2 units Halys ML @2.01 2 units Yi Zhou +4.5 @1.80 2 units Nardi ML @2.11 1 units",
+        "bet": "Set Point Bets Add Shang ML @1.81 4 units Budkov Kjaer ML @2.2 3 units Wu ML @1.82 2.5 units Zeppieri ML @1.72 2 units Halys ML @2.01 2 units Yi Zhou +4.5 @1.80 2 units Nardi ML @2.11 1 units",
+        "odds": null,
+        "units": "4u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

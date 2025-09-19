@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17859,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T00:11:47.307963",
+  "created_utc": 1757995907,
+  "media_file": "20250916_001146_17859.jpg",
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T04:11:48.472Z",
+  "ocr_text": "CircLV - 301 Miami Dolphins/Buffalo Bills CircaLas Vegas: Game #301 Away: Miami Dolphins (MIA) Home: Buffalo Bills (BUF) Game Time: 9/18 8:15:00PM (America/New_York) Current time:9/16 12:04:36AM SpotOdds Lines Histo Spread Spread Line History: Game MIA BUF Maxbet Timestamp Total 11 -11 20000 2025-09-15 5:12:32PM 49½ 12½ -12½ 20000 2025-09-15 1:22:56PM 49%2 12% -12% 10000 2025-09-14 8:36:18PM 49% 12½ -12%2 0 2025-09-14 8:35:38PM",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T04:11:49.381Z"
+}

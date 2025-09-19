@@ -1,0 +1,315 @@
+#!/usr/bin/env python3
+"""
+SINGLE-INSTANCE TELEGRAM CAPTURE
+- Uses filesystem lock to prevent multiple instances
+- No interactive prompts - exits cleanly if not authorized
+- Captures ALL messages from ALL sources with ANY file type
+"""
+import os
+import sys
+import asyncio
+import json
+import time
+from telethon import TelegramClient, events
+from telethon.sessions import StringSession
+from datetime import datetime
+
+# Force UTF-8 on Windows
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Configuration
+SESSION_STRING = os.getenv("TELEGRAM_STRING_SESSION", "1AZWarzkBu6DecBYr_WGn2OhJ82zbJANYjaS3RCJEQZu96w-6v6OXFoGtg-KsomiMtevVzIMjyo7bMqqAY_4qA4mAr4KXTpMCqSIuAahKFKhSQj-nmEDgONexQpVh2EEbyIUVbUhQ03kPZ2mTyklCo2K8lDRAlprat0oLPyxgWox3Q4O2hsNnSA-2UurCu2S1s036o3drscyG1qMD_Uu1sxF5NCk_zhC8rwgtM-eURPNr86a3m0vaeOuqmIrCi-A9tVtVGB1nIsV4-WCdmBYgmnE2cohm59DFhfEIR3VnJ5XAOI7o71GGnsl6oCPVDB6XFiu_3MxoRKkV_WppBJ6JGzrKFRLWpaY=")
+INBOX = r"C:\Users\mpmmo\FULL-LOCAL-PRODUCTION\inbox"
+VALIDATION_NUMBER = "+3212629156"
+api_id = 29479443
+api_hash = "e3a7a7226cf446bbfd5366f7da75cdfa"
+LOCKFILE = r"C:\Users\mpmmo\FULL-LOCAL-PRODUCTION\telegram_capture.lock"
+
+# Create directories
+os.makedirs(INBOX, exist_ok=True)
+os.makedirs(os.path.join(INBOX, "media"), exist_ok=True)
+
+def acquire_lock():
+    """Acquire a file lock to ensure single instance"""
+    try:
+        # Windows file locking approach
+        if os.path.exists(LOCKFILE):
+            # Check if PID in lockfile is still running
+            try:
+                with open(LOCKFILE, 'r') as f:
+                    old_pid = int(f.read().strip())
+                # Check if process exists using tasklist
+                import subprocess
+                result = subprocess.run(['tasklist', '/fi', f'PID eq {old_pid}'],
+                                      capture_output=True, text=True)
+                if str(old_pid) in result.stdout:
+                    print(f"[ERROR] Another instance appears to be running (PID={old_pid})")
+                    print(f"[INFO] Check lockfile: {LOCKFILE}")
+                    return False
+            except:
+                pass
+
+        # Write our PID to the lockfile
+        with open(LOCKFILE, 'w') as f:
+            f.write(str(os.getpid()))
+        return True
+    except Exception as e:
+        print(f"[ERROR] Failed to acquire lock: {e}")
+        return False
+
+def release_lock():
+    """Release the file lock"""
+    try:
+        if os.path.exists(LOCKFILE):
+            os.remove(LOCKFILE)
+    except:
+        pass
+
+def safe_print(msg):
+    try:
+        print(msg, flush=True)
+    except:
+        print(msg.encode('ascii', 'replace').decode('ascii'), flush=True)
+
+captured_messages = []
+client = None
+
+@events.register(events.NewMessage())
+async def universal_capture(event):
+    """Capture ANY message from ANY source with ANY file type"""
+    global captured_messages
+
+    try:
+        # Get source information
+        if event.is_private:
+            source = f"Private_{event.sender_id}"
+            source_type = "private"
+        else:
+            chat = await event.get_chat()
+            source = getattr(chat, 'title', f"Chat_{chat.id}")
+            source_type = "group/channel"
+
+        # Message details
+        message_text = event.message.message or "[no text]"
+        message_id = event.message.id
+        timestamp = datetime.now()
+
+        safe_print(f"[CAPTURED] {source}: {message_text[:100]}...")
+
+        # Initialize message data
+        msg_data = {
+            "timestamp": timestamp.isoformat(),
+            "source": source,
+            "source_type": source_type,
+            "message_id": message_id,
+            "text": message_text,
+            "media_type": None,
+            "media_info": {},
+            "files_saved": []
+        }
+
+        # Handle ALL media types
+        if event.message.media:
+            try:
+                media_folder = os.path.join(INBOX, "media")
+                base_filename = f"{timestamp.strftime('%Y%m%d_%H%M%S')}_{message_id}"
+
+                # Photo
+                if event.message.photo:
+                    msg_data["media_type"] = "photo"
+                    photo_path = os.path.join(media_folder, f"{base_filename}.jpg")
+                    downloaded = await event.message.download_media(file=photo_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"  [SAVED] Photo: {os.path.basename(downloaded)}")
+
+                # Document (ANY file type)
+                elif event.message.document:
+                    doc = event.message.document
+                    mime_type = getattr(doc, 'mime_type', 'unknown')
+                    file_name = None
+
+                    # Try to get original filename
+                    for attr in doc.attributes:
+                        if hasattr(attr, 'file_name'):
+                            file_name = attr.file_name
+                            break
+
+                    if not file_name:
+                        # Generate filename based on mime type
+                        ext_map = {
+                            'image/jpeg': '.jpg',
+                            'image/png': '.png',
+                            'image/gif': '.gif',
+                            'video/mp4': '.mp4',
+                            'audio/mpeg': '.mp3',
+                            'application/pdf': '.pdf',
+                            'text/plain': '.txt'
+                        }
+                        ext = ext_map.get(mime_type, '.bin')
+                        file_name = f"{base_filename}{ext}"
+
+                    msg_data["media_type"] = "document"
+                    msg_data["media_info"] = {
+                        "filename": file_name,
+                        "mime_type": mime_type,
+                        "size": doc.size
+                    }
+
+                    # Download the file
+                    doc_path = os.path.join(media_folder, file_name)
+                    downloaded = await event.message.download_media(file=doc_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"  [SAVED] File: {os.path.basename(downloaded)}")
+
+                # Video
+                elif event.message.video:
+                    msg_data["media_type"] = "video"
+                    video_path = os.path.join(media_folder, f"{base_filename}.mp4")
+                    downloaded = await event.message.download_media(file=video_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"  [SAVED] Video: {os.path.basename(downloaded)}")
+
+                # Audio/Voice
+                elif event.message.audio or event.message.voice:
+                    msg_data["media_type"] = "audio"
+                    audio_path = os.path.join(media_folder, f"{base_filename}.mp3")
+                    downloaded = await event.message.download_media(file=audio_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"  [SAVED] Audio: {os.path.basename(downloaded)}")
+
+                # Sticker
+                elif event.message.sticker:
+                    msg_data["media_type"] = "sticker"
+                    sticker_path = os.path.join(media_folder, f"{base_filename}_sticker.webp")
+                    downloaded = await event.message.download_media(file=sticker_path)
+                    if downloaded:
+                        msg_data["files_saved"].append(os.path.basename(downloaded))
+                        safe_print(f"  [SAVED] Sticker: {os.path.basename(downloaded)}")
+
+            except Exception as e:
+                safe_print(f"  [ERROR] Media download failed: {e}")
+
+        # Save message metadata
+        json_path = os.path.join(INBOX, f"{timestamp.strftime('%Y%m%d_%H%M%S')}_{source.replace(' ', '_')}_{message_id}.json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(msg_data, f, ensure_ascii=False, indent=2)
+
+        # Add to captured list for summary
+        captured_messages.append(msg_data)
+
+        # Send periodic summary every 10 messages
+        if len(captured_messages) % 10 == 0:
+            await send_summary()
+
+    except Exception as e:
+        safe_print(f"[ERROR] Capture failed: {e}")
+
+# Also capture album messages (multiple photos/videos sent together)
+@events.register(events.Album())
+async def album_capture(event):
+    """Capture album messages (grouped media)"""
+    try:
+        safe_print(f"[ALBUM] Received {len(event.messages)} items")
+        for message in event.messages:
+            # Create a synthetic event for each message in the album
+            await universal_capture(message)
+    except Exception as e:
+        safe_print(f"[ERROR] Album capture failed: {e}")
+
+async def send_summary():
+    """Send summary of captured messages"""
+    global captured_messages
+
+    if not captured_messages:
+        return
+
+    try:
+        summary = f"TELEGRAM CAPTURE SUMMARY ({len(captured_messages)} messages)\n\n"
+
+        for msg in captured_messages[-5:]:  # Last 5 messages
+            summary += f"From: {msg['source']}\n"
+            summary += f"Text: {msg['text'][:100]}...\n"
+            if msg['files_saved']:
+                summary += f"Files: {', '.join(msg['files_saved'])}\n"
+            summary += f"Time: {msg['timestamp'][:19]}\n\n"
+
+        await client.send_message(VALIDATION_NUMBER, summary)
+        safe_print(f"[SUMMARY] Sent to {VALIDATION_NUMBER}")
+
+    except Exception as e:
+        safe_print(f"[ERROR] Failed to send summary: {e}")
+
+async def main():
+    """Main function with no-prompt connection"""
+    global captured_messages, client
+
+    safe_print("=" * 60)
+    safe_print("SINGLE-INSTANCE TELEGRAM CAPTURE")
+    safe_print("=" * 60)
+
+    # Check for single instance
+    if not acquire_lock():
+        safe_print("[EXIT] Another instance is running")
+        sys.exit(1)
+
+    try:
+        safe_print("[INIT] Creating client...")
+        client = TelegramClient(StringSession(SESSION_STRING), api_id, api_hash)
+
+        # Add event handlers
+        client.add_event_handler(universal_capture)
+        client.add_event_handler(album_capture)
+
+        safe_print("[CONNECT] Attempting connection...")
+        # Use connect() first to check if authorized
+        await client.connect()
+
+        if not await client.is_user_authorized():
+            safe_print("[ERROR] Session not authorized. Please run auth script first.")
+            safe_print("[INFO] Run: python auth_and_export_session.py")
+            sys.exit(1)
+
+        # Now we can safely get user info
+        me = await client.get_me()
+        safe_print(f"[CONNECTED] As: {me.first_name} (@{me.username})")
+
+        # Show accessible chats
+        safe_print("[INFO] Accessible chats:")
+        count = 0
+        async for dialog in client.iter_dialogs(limit=10):
+            count += 1
+            safe_print(f"  {count}. {dialog.name}")
+
+        safe_print(f"[READY] Monitoring {count}+ sources")
+        safe_print(f"[READY] Saving to: {INBOX}")
+        safe_print(f"[READY] Reports to: {VALIDATION_NUMBER}")
+        safe_print("=" * 60)
+
+        # Run until disconnected
+        await client.run_until_disconnected()
+
+    except KeyboardInterrupt:
+        safe_print("\n[STOPPED] User interrupted")
+        if captured_messages:
+            await send_summary()
+    except Exception as e:
+        safe_print(f"[FATAL] {e}")
+    finally:
+        release_lock()
+        if client:
+            await client.disconnect()
+        safe_print("[EXIT] Cleanup complete")
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        safe_print(f"[FATAL] {e}")
+        release_lock()

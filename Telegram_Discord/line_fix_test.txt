@@ -1,0 +1,28 @@
+Line Fix Test Results
+=====================
+
+Travy with picks:
+Input: 'Travy\nNBA: Warriors ML +150 2u\nMLB: Yankees -1.5 -110 1.5u'
+Output:
+**free_cappers**
+**Travy**
+NBA: Warriors ML +150 2u
+MLB: Yankees -1.5 -110 1.5u
+--------------------------------------------------
+
+vegasmirabet promo:
+Input: 'vegasmirabet\n➖➖➖➖➖\nDM➡️@cappersfree✅'
+Output:
+**free_cappers**
+**vegasmirabet**
+vegasmirabet
+--------------------------------------------------
+
+No play test:
+Input: 'Travy\nNo bet tonight, back tomorrow!'
+Output:
+**free_cappers**
+**Travy**
+No official play today — back tomorrow.
+--------------------------------------------------
+

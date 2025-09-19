@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2470080886,
+  "chat_title": "DIAMOND 💎 VIP PACKAGE",
+  "chat_username": null,
+  "message_id": 3175,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-15T19:00:52.597678",
+  "created_utc": 1757977252,
+  "media_file": "20250915_190052_3175.jpg",
+  "routed_from": "inbox",
+  "routed_to": "paid_diamond",
+  "routed_at": "2025-09-15T23:00:55.554Z",
+  "ocr_text": "NFL: Bucs +4.5 3%",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-15T23:00:57.957Z"
+}

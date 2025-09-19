@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:52.118Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n**VIP**\n*MLB*\n📊 PROP: NO RUN FIRST INNING VIP PLAYS SEPTEMBER 17 TH Xe NRFIALGORITHM lin Away Los Angeles Angels Atlanta Braves San Diego Padres Toronto Blue Jays Baltimore Orioles Chicago Cubs Miami Marlins Cleveland Guardians Texas Rangers Seattle Mariners Cincinnati Reds Philadelphia Phillies San Francisco Giants New York Yankees Athletics Colorado Rockies Detroit Tigers Houston Astros Kansas City Royals St. Louis Cardinals Los Angeles Dodgers Arizona Diamondbacks Minnesota Twins Boston Red Sox Home NRFI / YRFI Algo Score Odds Implied Odds NRFI % Probability Probability YRFI % Edge Grade Milwaukee Brewers NRFI 26.92 55.95% 62.65% 37.35% 6.71% A Washington Nationals NRFI 25.82 51.46% 61.65% 38.35% 10.20% B+ New York Mets NRFI 25.03 54.95% 60.94% 39.06% 5.98% B+ Tampa Bay Rays NRFI 24.03 53.27% 60.03% 39.97% 6.76% B Chicago White Sox NRFI 23.61 59.35% 40.65% C+ Pittsburgh Pirates Unpredictable Unpredictable X Unpredictable x Unpredictable × Unpredictable х 22.62 57.70% 42.30% с 22.08 56.80% 43.20% с 21.02 55.03% 44.97% D 20.60 54.33% 45.67% F 18.91 51.51% 48.49% F di Unpredictable X 17.88 49.80% 50.20% F YRFI Unpredictable x Unpredictable X Unpredictable × 12.77 10.79 16.11 46.85% 53.15% F 14.60 44.34% 55.66% F 41.29% 58.71% B 52.38% 37.98% 62.02% 9.64% A ANB -127",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_8508.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "NRFI",
+        "home": "YRFI"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "NO RUN FIRST INNING VIP PLAYS SEPTEMBER 17 TH Xe NRFIALGORITHM lin Away Los Angeles Angels Atlanta Braves San Diego Padres Toronto Blue Jays Baltimore Orioles Chicago Cubs Miami Marlins Cleveland Guardians Texas Rangers Seattle Mariners Cincinnati Reds Philadelphia Phillies San Francisco Giants New York Yankees Athletics Colorado Rockies Detroit Tigers Houston Astros Kansas City Royals St. Louis Cardinals Los Angeles Dodgers Arizona Diamondbacks Minnesota Twins Boston Red Sox Home NRFI / YRFI Algo Score Odds Implied Odds NRFI % Probability Probability YRFI % Edge Grade Milwaukee Brewers NRFI 26.92 -127 55.95% 62.65% 37.35% 6.71% A Washington Nationals NRFI 25.82 -106 51.46% 61.65% 38.35% 10.20% B+ New York Mets NRFI 25.03 -122 54.95% 60.94% 39.06% 5.98% B+ Tampa Bay Rays NRFI 24.03 -114 53.27% 60.03% 39.97% 6.76% B Chicago White Sox NRFI 23.61 59.35% 40.65% C+ Pittsburgh Pirates Unpredictable Unpredictable X Unpredictable x Unpredictable × Unpredictable х 22.62 57.70% 42.30% с 22.08 56.80% 43.20% с 21.02 55.03% 44.97% D 20.60 54.33% 45.67% F 18.91 51.51% 48.49% F di Unpredictable X 17.88 49.80% 50.20% F YRFI Unpredictable x Unpredictable X Unpredictable × 12.77 10.79 16.11 46.85% 53.15% F 14.60 44.34% 55.66% F 41.29% 58.71% B -110 52.38% 37.98% 62.02% 9.64% A ANB",
+        "bet": "NO RUN FIRST INNING VIP PLAYS SEPTEMBER 17 TH Xe NRFIALGORITHM lin Away Los Angeles Angels Atlanta Braves San Diego Padres Toronto Blue Jays Baltimore Orioles Chicago Cubs Miami Marlins Cleveland Guardians Texas Rangers Seattle Mariners Cincinnati Reds Philadelphia Phillies San Francisco Giants New York Yankees Athletics Colorado Rockies Detroit Tigers Houston Astros Kansas City Royals St. Louis Cardinals Los Angeles Dodgers Arizona Diamondbacks Minnesota Twins Boston Red Sox Home NRFI / YRFI Algo Score Odds Implied Odds NRFI % Probability Probability YRFI % Edge Grade Milwaukee Brewers NRFI 26.92 55.95% 62.65% 37.35% 6.71% A Washington Nationals NRFI 25.82 51.46% 61.65% 38.35% 10.20% B+ New York Mets NRFI 25.03 54.95% 60.94% 39.06% 5.98% B+ Tampa Bay Rays NRFI 24.03 53.27% 60.03% 39.97% 6.76% B Chicago White Sox NRFI 23.61 59.35% 40.65% C+ Pittsburgh Pirates Unpredictable Unpredictable X Unpredictable x Unpredictable × Unpredictable х 22.62 57.70% 42.30% с 22.08 56.80% 43.20% с 21.02 55.03% 44.97% D 20.60 54.33% 45.67% F 18.91 51.51% 48.49% F di Unpredictable X 17.88 49.80% 50.20% F YRFI Unpredictable x Unpredictable X Unpredictable × 12.77 10.79 16.11 46.85% 53.15% F 14.60 44.34% 55.66% F 41.29% 58.71% B 52.38% 37.98% 62.02% 9.64% A ANB",
+        "odds": "-127",
+        "units": null,
+        "type": "prop"
+      }
+    ],
+    "capper": "VIP",
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

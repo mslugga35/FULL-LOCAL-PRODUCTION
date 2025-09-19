@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:55.290Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **POD** 🔥\n*MLB*\n5 units POD: Brewers -1 5 units Plays: Reds MI Blue Jays MI Mets MI Brewers -1 Rockies Over 10.5 1 units Plays: Cubs MI Orioles Over 8 (5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122802_11565.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "5 units POD: Brewers -1 5 units Plays: Reds MI Blue Jays MI Mets MI Brewers -1 Rockies Over 10.5 1 units Plays: Cubs MI Orioles Over 8",
+        "bet": "5 units POD: Brewers -1 5 units Plays: Reds MI Blue Jays MI Mets MI Brewers -1 Rockies Over 10.5 1 units Plays: Cubs MI Orioles Over 8",
+        "odds": null,
+        "units": "5u",
+        "type": "total"
+      }
+    ],
+    "capper": null,
+    "confidence": "POD",
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

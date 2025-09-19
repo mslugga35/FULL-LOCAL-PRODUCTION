@@ -1,0 +1,43 @@
+{
+  "channels": {
+    "CAPPERS FREE": {
+      "lastMessageId": null,
+      "lastCheckTime": null,
+      "lastMessageDate": null,
+      "processedCount": 0,
+      "failedCount": 0,
+      "consecutiveErrors": 0
+    },
+    "Cappers leaked": {
+      "lastMessageId": null,
+      "lastCheckTime": null,
+      "lastMessageDate": null,
+      "processedCount": 0,
+      "failedCount": 0,
+      "consecutiveErrors": 0
+    },
+    "Exclusive Cappers": {
+      "lastMessageId": null,
+      "lastCheckTime": null,
+      "lastMessageDate": null,
+      "processedCount": 0,
+      "failedCount": 0,
+      "consecutiveErrors": 0
+    }
+  },
+  "processedMessages": [],
+  "failedMessages": [],
+  "lastQuickCheck": 0,
+  "lastDeepCheck": 0,
+  "lastRecoveryCheck": 0,
+  "stats": {
+    "startTime": "2025-09-13T20:04:09.575Z",
+    "messagesProcessed": 0,
+    "screenshotsOCRd": 0,
+    "duplicatesSkipped": 0,
+    "errors": 2,
+    "retries": 0,
+    "recovered": 0
+  },
+  "lastSaved": "2025-09-14T11:43:54.544Z"
+}

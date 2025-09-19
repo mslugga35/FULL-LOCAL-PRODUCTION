@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-09-17T18:29:34.103Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*Tennis*\nB4 S Betting4 Profitt 16th September Tennis 16th September: Tennis: ~Hangzhou Navone +2.5 vs Tien 1 units Kovacevic ML vs Nardi 0.75 units ~Chengdu Shang ML vs Bergs 0.75 units -119 (1u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8497.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "Tennis",
+    "teams": [
+      {
+        "away": "5",
+        "home": "Tien"
+      },
+      {
+        "away": "Kovacevic ML",
+        "home": "Nardi"
+      },
+      {
+        "away": "Shang ML",
+        "home": "Bergs"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "B4 S Betting4 Profitt 16th September Tennis 16th September: Tennis: ~Hangzhou Navone +2.5 vs Tien -119 1 units Kovacevic ML vs Nardi -125 0.75 units ~Chengdu Shang ML vs Bergs -109 0.75 units",
+        "bet": "B4 S Betting4 Profitt 16th September Tennis 16th September: Tennis: ~Hangzhou Navone +2.5 vs Tien 1 units Kovacevic ML vs Nardi 0.75 units ~Chengdu Shang ML vs Bergs 0.75 units",
+        "odds": "-119",
+        "units": "1u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

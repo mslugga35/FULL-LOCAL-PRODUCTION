@@ -1,0 +1,21 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 1560546587,
+  "chat_title": "Cappers leaked ‼️",
+  "chat_username": "Cappersleaked1",
+  "message_id": 8476,
+  "text": "",
+  "has_media": true,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T01:21:50.863938",
+  "created_utc": 1758000110,
+  "media_file": "20250916_012149_8476.jpg",
+  "routed_from": "inbox",
+  "routed_to": "leaked_cappers",
+  "routed_at": "2025-09-16T05:21:53.922Z",
+  "ocr_text": "All BETS A11Bets KBO NC Dinos ML (+110) 0.5U 9-1 LAST 10 KBO PLAYS & & &",
+  "ocr_done": true,
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T05:21:55.560Z"
+}

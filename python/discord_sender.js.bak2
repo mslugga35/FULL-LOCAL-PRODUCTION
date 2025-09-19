@@ -1,0 +1,300 @@
+/**
+ * Discord Message Sender
+ * Reads messages from queue folders and sends to Discord
+ * Runs independently from Telegram collector
+ */
+
+require('dotenv').config();
+const Discord = require('discord.js');
+const fs = require('fs').promises;
+const path = require('path');
+
+const CONFIG = {
+  discord: {
+    token: process.env.DISCORD_OCR_BOT_TOKEN,
+    channels: {
+      // Free channels - these work fine
+      free_cappers: "1403894557615325216",       // #leaks
+      leaked_cappers: "1403894596186017962",     // #cappers-leaked  
+      exclusive_cappers: "1403894653660692500",  // #exclusive-cappers
+      
+      // Paid channels - all go to same paid channel until you create a paid channel
+      
+      // Sports channels (optional)
+      paid: "1403894557615325216",
+      sports: "1403894557615325216"  // Can change this to a dedicated sports channel
+    }
+  },
+  queueDir: '/root/bots/message_queue',
+  processedDir: '/root/bots/message_queue/processed',
+  checkInterval: 10000  // Check every 10 seconds
+};
+
+// Folder to Discord channel mapping (ONLY FREE CHANNELS)
+const FOLDER_MAPPING = {
+  'free_cappers': 'free_cappers',
+  'leaked_cappers': 'leaked_cappers',
+  'exclusive_cappers': 'exclusive_cappers',
+  'sports_porter': 'sports',
+  'sports_buster': 'sports',
+  'sports_junk': 'sports'
+};
+
+class DiscordSender {
+  constructor() {
+    this.client = new Discord.Client({
+      intents: [
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildMessages,
+        Discord.GatewayIntentBits.MessageContent,
+      ],
+    });
+    
+    this.channels = {};
+    this.sentMessages = new Set();
+    this.isReady = false;
+  }
+
+  async initialize() {
+    try {
+      console.log('[START] Initializing Discord Sender...');
+      
+      // Ensure processed directory exists
+      await fs.mkdir(CONFIG.processedDir, { recursive: true });
+      
+      // Load sent messages history
+      await this.loadSentHistory();
+      
+      // Connect to Discord
+      await this.client.login(CONFIG.discord.token);
+      console.log('[OK] Discord connected');
+      
+      // Wait for ready
+      await new Promise(resolve => {
+        this.client.once('ready', resolve);
+      });
+      
+      // Cache Discord channels
+      for (const [key, channelId] of Object.entries(CONFIG.discord.channels)) {
+        try {
+          const channel = await this.client.channels.fetch(channelId);
+          if (channel) {
+            this.channels[key] = channel;
+            console.log(`[OK] Discord channel ${key}: #${channel.name}`);
+          }
+        } catch (error) {
+          console.error(`[WARN] Could not fetch channel ${key} (${channelId})`);
+        }
+      }
+      
+      this.isReady = true;
+      console.log('[READY] Discord Sender initialized!');
+      
+    } catch (error) {
+      console.error('[ERROR] Initialization failed:', error);
+      throw error;
+    }
+  }
+
+  async loadSentHistory() {
+    try {
+      const historyFile = path.join(CONFIG.processedDir, 'sent_history.json');
+      const data = await fs.readFile(historyFile, 'utf8');
+      const history = JSON.parse(data);
+      
+      // Check if it's still the same day
+      const today = new Date().toDateString();
+      if (history.date === today) {
+        this.sentMessages = new Set(history.messages);
+        console.log(`[INFO] Loaded ${this.sentMessages.size} sent messages from today`);
+      } else {
+        console.log('[INFO] New day - starting fresh sent history');
+      }
+    } catch (error) {
+      console.log('[INFO] No sent history found - starting fresh');
+    }
+  }
+
+  async saveSentHistory() {
+    const historyFile = path.join(CONFIG.processedDir, 'sent_history.json');
+    const history = {
+      date: new Date().toDateString(),
+      messages: Array.from(this.sentMessages)
+    };
+    await fs.writeFile(historyFile, JSON.stringify(history, null, 2));
+  }
+
+  async processFolder(folderName) {
+    const folderPath = path.join(CONFIG.queueDir, folderName);
+    const discordChannelKey = FOLDER_MAPPING[folderName];
+    
+    if (!discordChannelKey) {
+      console.log(`[SKIP] No mapping for folder: ${folderName}`);
+      return;
+    }
+    
+    const discordChannel = this.channels[discordChannelKey];
+    if (!discordChannel) {
+      console.log(`[SKIP] No Discord channel for: ${folderName}`);
+      return;
+    }
+    
+    try {
+      const files = await fs.readdir(folderPath);
+      const jsonFiles = files.filter(f => f.endsWith('.json'));
+      
+      for (const file of jsonFiles) {
+        const filepath = path.join(folderPath, file);
+        
+        try {
+          // Read message data
+          const data = await fs.readFile(filepath, 'utf8');
+          const message = JSON.parse(data);
+          
+          // Skip if already sent
+          if (this.sentMessages.has(message.id)) {
+            continue;
+          }
+          
+          // Create Discord embed
+          const embed = new Discord.EmbedBuilder()
+            .setAuthor({ 
+              name: `${folderName.includes('paid') ? '💎 PAID' : '🆓 FREE'} - ${(message.channelName || message.channel_title || message.chat_title || message.from || 'Unknown')}` 
+            })
+            .setTimestamp(new Date(message.timestamp))
+            .setFooter({ text: `ID: ${message.messageId}` });
+          
+          // Set color
+          if (folderName.includes('paid')) {
+            embed.setColor('#FFD700'); // Gold for paid
+          } else if (folderName.includes('sports')) {
+            embed.setColor('#0099FF'); // Blue for sports
+          } else {
+            embed.setColor('#00FF00'); // Green for free
+          }
+          
+          // Add text
+          let description = '';
+          if (message.text) {
+            description += message.text;
+          }
+          
+          // Add OCR text if available (for free channels, this replaces the image)
+          if (message.ocrText) {
+            if (description) description += '\n\n';
+            // Just show the text cleanly without "Screenshot Text" label
+            description += `\`\`\`\n${message.ocrText}\n\`\`\``;
+          }
+          
+          if (description) {
+            embed.setDescription(description.substring(0, 4096));
+          }
+          
+          // Handle media - ONLY send if no OCR text available
+          // For free channels, we prefer OCR text over images
+          const files = [];
+          if (message.mediaFile && !message.ocrText) {
+            // Only attach image if we don't have OCR text
+            const mediaPath = path.join(folderPath, message.mediaFile);
+            try {
+              const mediaBuffer = await fs.readFile(mediaPath);
+              files.push(new Discord.AttachmentBuilder(mediaBuffer, { name: 'image.jpg' }));
+            } catch (error) {
+              console.log(`[WARN] Could not read media: ${message.mediaFile}`);
+            }
+          }
+          
+          // Send to Discord
+          await discordChannel.send({
+            embeds: [embed],
+            files: files.length > 0 ? files : undefined
+          });
+          
+          console.log(`[SENT] ${(message.channelName || message.channel_title || message.chat_title || message.from || 'Unknown')} -> #${discordChannel.name}`);
+          
+          // Mark as sent
+          this.sentMessages.add(message.id);
+          
+          // Move to processed
+          const processedFolder = path.join(CONFIG.processedDir, folderName);
+          await fs.mkdir(processedFolder, { recursive: true });
+          
+          const newPath = path.join(processedFolder, file);
+          await fs.rename(filepath, newPath);
+          
+          // Move media if exists
+          if (message.mediaFile) {
+            const oldMediaPath = path.join(folderPath, message.mediaFile);
+            const newMediaPath = path.join(processedFolder, message.mediaFile);
+            try {
+              await fs.rename(oldMediaPath, newMediaPath);
+            } catch (error) {
+              // Media might not exist
+            }
+          }
+          
+          // Save sent history periodically
+          if (this.sentMessages.size % 5 === 0) {
+            await this.saveSentHistory();
+          }
+          
+        } catch (error) {
+          console.error(`[ERROR] Failed to process ${file}:`, error);
+        }
+      }
+      
+    } catch (error) {
+      console.error(`[ERROR] Failed to process folder ${folderName}:`, error);
+    }
+  }
+
+  async processQueue() {
+    if (!this.isReady) return;
+    
+    try {
+      // Get all folders
+      const entries = await fs.readdir(CONFIG.queueDir, { withFileTypes: true });
+      const folders = entries.filter(e => e.isDirectory() && e.name !== 'processed');
+      
+      // Process each folder
+      for (const folder of folders) {
+        await this.processFolder(folder.name);
+      }
+      
+      // Save sent history
+      await this.saveSentHistory();
+      
+    } catch (error) {
+      console.error('[ERROR] Queue processing error:', error);
+    }
+  }
+
+  async run() {
+    await this.initialize();
+    
+    console.log(`[RUNNING] Processing queue every ${CONFIG.checkInterval/1000} seconds...`);
+    
+    // Initial process
+    await this.processQueue();
+    
+    // Set up interval
+    setInterval(() => {
+      this.processQueue();
+    }, CONFIG.checkInterval);
+    
+    // Graceful shutdown
+    process.on('SIGINT', async () => {
+      console.log('\n[STOP] Saving state and shutting down...');
+      await this.saveSentHistory();
+      this.client.destroy();
+      process.exit(0);
+    });
+  }
+}
+
+// Start sender
+const sender = new DiscordSender();
+sender.run().catch(error => {
+  console.error('[FATAL] Sender crashed:', error);
+  process.exit(1);
+});

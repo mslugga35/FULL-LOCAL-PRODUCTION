@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:24.608Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nk 12:23 5 G+ Game Tracker ▸ Mid 8th 1 2 3 4 5 B 7 8 9 T PHI 0 0 0 0 0 6 0 0 - 6 LAD 030 1 0 0 0 0 4 B... S.. 0.. Popular Player Props Play-by-Play Half Innings In Phillies Dodgers SPREAD TOTAL WINNER -1.5 5210 0 10.5 TO WIN Phillies @Dodgers Wager $6,200 Balance: $6,200.00 Payout $34,100 +$100 +$250 +$600 1 2 3 4 5 LO CO 6 7 8 9 0 Place bet ☑ -700\n_Posted at 12:23 _",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_004025_17959.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "k 12:23 5 G+ Game Tracker ▸ Mid 8th 1 2 3 4 5 B 7 8 9 T PHI 0 0 0 0 0 6 0 0 - 6 LAD 030 1 0 0 0 0 4 B... S.. 0.. Popular Player Props Play-by-Play Half Innings In Phillies Dodgers SPREAD TOTAL WINNER -1.5 5210 0 10.5 -700 -150 +450 TO WIN Phillies @Dodgers Wager $6,200 Balance: $6,200.00 Payout $34,100 +$100 +$250 +$600 1 2 3 4 5 LO CO 6 7 8 9 0 Place bet ☑",
+        "bet": "k 12:23 5 G+ Game Tracker ▸ Mid 8th 1 2 3 4 5 B 7 8 9 T PHI 0 0 0 0 0 6 0 0 - 6 LAD 030 1 0 0 0 0 4 B... S.. 0.. Popular Player Props Play-by-Play Half Innings In Phillies Dodgers SPREAD TOTAL WINNER -1.5 5210 0 10.5 TO WIN Phillies @Dodgers Wager $6,200 Balance: $6,200.00 Payout $34,100 +$100 +$250 +$600 1 2 3 4 5 LO CO 6 7 8 9 0 Place bet ☑",
+        "odds": "-700",
+        "units": null,
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": "12:23 "
+  },
+  "sent_to_discord": false
+}

@@ -1,0 +1,62 @@
+Fixed Formatter Test Results
+============================
+
+vegasmirabet alias:
+Input: 'vegasmirabet\n➖➖➖➖➖\nDM➡️@cappersfree✅'
+Output:
+**free_cappers**
+**vegasmirabet**
+vegasmirabet
+--------------------------------------------------
+
+Travy promo:
+Input: 'Travy\n➖➖➖➖➖\nDM➡️@cappersfree✅'
+Output:
+**free_cappers**
+**Travy**
+Travy
+--------------------------------------------------
+
+OutofLineBets:
+Input: 'OutofLineBets\n➖➖➖➖➖\nDM➡️@cappersfree✅'
+Output:
+**free_cappers**
+**OutofLineBets**
+OutofLineBets
+--------------------------------------------------
+
+Travy with picks:
+Input: 'Travy\nNBA: Warriors ML +150 2u\nMLB: Yankees -1.5 -110 1.5u'
+Output:
+**free_cappers**
+**Travy**
+Travy NBA: Warriors ML MLB: Yankees +150 2u
+110 1.5u
+--------------------------------------------------
+
+CAPPERS FREE spam:
+Input: 'CAPPERS FREE💥\n@YourDailyCapper✅\nMLB: Brewers -1.5 (+110) 2u\nNBA: Warriors ML -145 1.5u'
+Output:
+**free_cappers**
+**YourDailyCapper**
+@YourDailyCapper MLB: Brewers
+1.5 () NBA: Warriors ML +110 2u
+145 1.5u
+--------------------------------------------------
+
+No play test:
+Input: 'Travy\nNo bet tonight, back tomorrow!'
+Output:
+**free_cappers**
+**Travy**
+No official play today — back tomorrow.
+--------------------------------------------------
+
+yourdailycapper alias:
+Input: 'yourdailycapper\nMLB: Dodgers ML +120 1u'
+Output:
+**free_cappers**
+**YourDailyCapper**
+yourdailycapper MLB: Dodgers ML +120 1u
+--------------------------------------------------
+

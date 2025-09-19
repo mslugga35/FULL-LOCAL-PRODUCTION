@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""
+Telegram Bot Dry-Run Trace - READ-ONLY
+Shows what messages would be routed where, without sending
+"""
+import os
+import sys
+import asyncio
+import json
+import csv
+import hashlib
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from telethon import TelegramClient
+from telethon.sessions import StringSession
+from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
+
+# Force UTF-8
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# From production config
+SESSION_STRING = "1AQAOMTQ5LjE1MC4xNzUuNTcBu2g+yaG4eWVh5epPtcgWfQTPkqasIdvsxCj68U7clUx9mn3LsVTRIXr/0xJoWABsu/2Khznce7EyhPh0wMw4aFTKllNmUA+iJsGib4sQfpd5dMcg0Ua3BR9JCx596L7qNzAhSda7R2grZFv5cnyx5oT39iXIA3edgHUpf0n+0XwfFFwK8oIqoJgPvoThCpwPit2iCXGM1LERLzssLErvGYzUeAklhKBvle3OJJRFPz4GQIkSRiVQLutLHHXUh3uLws7Pauq/fuhTbd8KxQ5987wcrXlwGI7iUOskQkc+vGlDuXUr3pgbsRHZ5qnIycCnWE3GhO/ns5OtXvJ8PbvkMjQ="
+API_ID = 29479443
+API_HASH = "e3a7a7226cf446bbfd5366f7da75cdfa"
+
+# Routing map from channel_routing_map.py
+TELEGRAM_TO_FOLDER = {
+    -1002177758646: 'paid_uatb',
+    -1002470080886: 'paid_diamond',
+    -1002592669126: 'free_cappers',
+    -1001560546587: 'cappers_leaked',
+    -1002608783933: 'exclusive_cappers'
+}
+
+FOLDER_TO_DISCORD = {
+    'paid_uatb': {
+        'server': '675908407617650697',
+        'channel': '1403837637730762875',
+        'channel_name': 'paid-messages'
+    },
+    'paid_diamond': {
+        'server': '675908407617650697',
+        'channel': '1403837637730762875',
+        'channel_name': 'paid-messages'
+    },
+    'free_cappers': {
+        'server': '1390050801136701642',
+        'channel': '1403894557615325216',
+        'channel_name': 'cappers-free-leaks'
+    },
+    'cappers_leaked': {
+        'server': '1390050801136701642',
+        'channel': '1403894596186017962',
+        'channel_name': 'cappers-leaked'
+    },
+    'exclusive_cappers': {
+        'server': '1390050801136701642',
+        'channel': '1403894653660692500',
+        'channel_name': 'exclusive-cappers'
+    }
+}
+
+# Output paths
+LOG_DIR = Path("C:/Users/mpmmo/FULL-LOCAL-PRODUCTION/logs/dryrun/telegram/2025-09-18")
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+async def mock_send(*args, **kwargs):
+    """Mock any send operations"""
+    print(f"MOCK_SEND: Blocked send attempt to {kwargs.get('chat_id', 'unknown')}")
+    return None
+
+async def get_content_type(message):
+    """Determine content type of message"""
+    if message.photo or isinstance(message.media, MessageMediaPhoto):
+        return "image"
+    elif isinstance(message.media, MessageMediaDocument):
+        if hasattr(message.media.document, 'mime_type'):
+            mime = message.media.document.mime_type
+            if 'pdf' in mime:
+                return "pdf"
+            elif 'image' in mime:
+                return "image"
+        return "document"
+    elif message.text:
+        return "text"
+    else:
+        return "other"
+
+async def hash_content(message):
+    """Generate hash for message content"""
+    try:
+        if message.text:
+            return hashlib.sha256(message.text.encode()).hexdigest()
+        elif message.media:
+            return hashlib.sha256(str(message.media.id).encode()).hexdigest()
+        else:
+            return None
+    except:
+        return None
+
+async def main():
+    # Get today's date range in NY timezone
+    ny_tz = timezone(timedelta(hours=-5))  # EST
+    today_start = datetime.now(ny_tz).replace(hour=0, minute=0, second=0, microsecond=0)
+    now = datetime.now(ny_tz)
+
+    print(f"=== TELEGRAM DRY-RUN TRACE ===")
+    print(f"Time Window: {today_start.strftime('%Y-%m-%d %H:%M:%S')} to {now.strftime('%H:%M:%S')} (America/New_York)")
+    print(f"Mode: READ-ONLY (no sends)")
+    print()
+
+    # Initialize client
+    client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
+
+    # Monkey-patch send methods
+    client.send_message = mock_send
+    client.send_file = mock_send
+
+    routing_ledger = []
+    stats = {'total': 0, 'by_queue': {}, 'unmapped': []}
+
+    try:
+        await client.start()
+        print("✅ Connected to Telegram (READ-ONLY)")
+        print()
+
+        # Get channel info
+        print("=== FETCHING TODAY'S MESSAGES ===")
+        for chat_id, folder in TELEGRAM_TO_FOLDER.items():
+            try:
+                # Get channel entity
+                entity = await client.get_entity(chat_id)
+                chat_title = getattr(entity, 'title', str(chat_id))
+                print(f"\n📡 Channel: {chat_title} ({chat_id})")
+
+                # Fetch today's messages
+                messages = []
+                async for msg in client.iter_messages(entity, offset_date=now, reverse=True):
+                    if msg.date.replace(tzinfo=ny_tz) >= today_start:
+                        messages.append(msg)
+
+                print(f"   Found {len(messages)} messages today")
+
+                for msg in messages:
+                    stats['total'] += 1
+
+                    # Determine routing
+                    queue_folder = TELEGRAM_TO_FOLDER.get(chat_id, None)
+                    local_path = f"C:/Users/mpmmo/FULL-LOCAL-PRODUCTION/message_queue/{queue_folder}/" if queue_folder else None
+                    discord_info = FOLDER_TO_DISCORD.get(queue_folder, {}) if queue_folder else {}
+
+                    # Build ledger entry
+                    entry = {
+                        "timestamp_local": msg.date.strftime("%Y-%m-%d %H:%M:%S"),
+                        "source_platform": "telegram",
+                        "source_chat_id": str(chat_id),
+                        "source_chat_title": chat_title,
+                        "message_id": str(msg.id),
+                        "author": getattr(msg.sender, 'username', 'unknown') if msg.sender else None,
+                        "content_type": await get_content_type(msg),
+                        "destination_folder_local": local_path,
+                        "destination_queue_name": queue_folder,
+                        "intended_downstream_discord_channel_id": discord_info.get('channel'),
+                        "intended_downstream_discord_channel_name": discord_info.get('channel_name'),
+                        "action": "WOULD_ROUTE" if queue_folder else "SKIP_UNMAPPED",
+                        "skip_reason": None if queue_folder else "No routing configured",
+                        "source_file_path": None,
+                        "hash": await hash_content(msg)
+                    }
+
+                    routing_ledger.append(entry)
+
+                    # Update stats
+                    if queue_folder:
+                        stats['by_queue'][queue_folder] = stats['by_queue'].get(queue_folder, 0) + 1
+                    else:
+                        stats['unmapped'].append(chat_id)
+
+                    # Show sample
+                    content_preview = ""
+                    if msg.text:
+                        content_preview = msg.text[:50] + "..." if len(msg.text) > 50 else msg.text
+                        content_preview = content_preview.replace('\n', ' ')
+
+                    print(f"   [{msg.date.strftime('%H:%M')}] {entry['content_type']:8} → {queue_folder or 'UNMAPPED':20} | {content_preview}")
+
+            except Exception as e:
+                print(f"   ❌ Error processing {chat_id}: {str(e)}")
+
+        # Save ledger as JSON
+        json_path = LOG_DIR / "routing_ledger.json"
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(routing_ledger, f, indent=2, ensure_ascii=False)
+        print(f"\n✅ Saved JSON ledger: {json_path}")
+
+        # Save ledger as CSV
+        csv_path = LOG_DIR / "routing_ledger.csv"
+        if routing_ledger:
+            with open(csv_path, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=routing_ledger[0].keys())
+                writer.writeheader()
+                writer.writerows(routing_ledger)
+            print(f"✅ Saved CSV ledger: {csv_path}")
+
+        # Print summary
+        print("\n=== SUMMARY ===")
+        print(f"Total messages processed: {stats['total']}")
+        print(f"\nBy Queue:")
+        for queue, count in stats['by_queue'].items():
+            print(f"  {queue:20} : {count:3} messages")
+
+        if stats['unmapped']:
+            print(f"\nUnmapped sources: {len(set(stats['unmapped'])} unique")
+
+    except Exception as e:
+        print(f"\n❌ Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        await client.disconnect()
+        print("\n✅ Disconnected from Telegram")
+
+if __name__ == "__main__":
+    asyncio.run(main())

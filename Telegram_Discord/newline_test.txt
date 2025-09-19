@@ -1,0 +1,8 @@
+Newline Test Results
+===================
+
+Input: 'Travy\nNBA: Warriors ML +150 2u\nMLB: Yankees -1.5 -110 1.5u'
+Output:
+**free_cappers**
+**Travy**
+Travy NBA: Warriors ML MLB: Yankees -1.5 +150 2u

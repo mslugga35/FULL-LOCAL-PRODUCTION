@@ -1,0 +1,33 @@
+ocr:
+  enabled: true
+  provider: vision   # or tesseract (not included)
+  mode: capper_picks
+  queues: ["free_cappers"]
+forwarder:
+  batch_size: 1
+  max_retries: 5
+  retry_backoff_seconds: 2
+
+  # Per-queue minimum spacing between sends (seconds)
+  per_queue_min_interval_seconds:
+    paid_uatb: 0.6
+    paid_diamond: 0.6
+    free_cappers: 0.3
+    cappers_leaked: 0.3
+    exclusive_cappers: 0.3
+    signal_picks: 1.0
+    default: 0.5
+
+  # When we see a 429, pause this queue for a short time
+  on_429_cooldown_seconds: 30
+
+  # Cap very large Retry-After to avoid hour-long sleeps
+  max_retry_after_seconds: 60
+collector:
+  media_download: true
+paths:
+  base: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord"
+  inbox: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\inbox"
+  queue: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\message_queue"
+  archive: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\sent_archive"
+  logs: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\logs"

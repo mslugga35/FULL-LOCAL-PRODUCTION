@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:37.936Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\nKims Picks KBO CARD Hanwha Eagles -1.5 (1 units) Doosan Bears ml (0.5 units) SSG Vs NC Dino's under 8.5 (0.5 units) GAME 1 Make sure the Dino's Bet is for game 1 as they play a double header tonight. (1u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8500.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [
+      {
+        "away": "SSG",
+        "home": "NC Dino"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Kims Picks KBO CARD Hanwha Eagles -1.5 (1 units) Doosan Bears ml (0.5 units) SSG Vs NC Dino's under 8.5 (0.5 units) GAME 1 Make sure the Dino's Bet is for game 1 as they play a double header tonight.",
+        "bet": "Kims Picks KBO CARD Hanwha Eagles -1.5 (1 units) Doosan Bears ml (0.5 units) SSG Vs NC Dino's under 8.5 (0.5 units) GAME 1 Make sure the Dino's Bet is for game 1 as they play a double header tonight.",
+        "odds": null,
+        "units": "1u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

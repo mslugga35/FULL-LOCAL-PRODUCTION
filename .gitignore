@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.venv_troubleshooter/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+*.log.*
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Session files
+*.session
+*.session.backup
+*.session-journal
+telegram_string_session.txt
+
+# Sensitive configuration
+google-vision-key.json
+routing_config.json
+telegram_string_session.txt
+
+# Message data
+inbox/
+message_queue/
+sent_archive/
+processed_messages/
+recent_messages/
+today_messages/
+last_messages.json
+
+# Lock files
+*.lock
+
+# Backups
+backup_*/
+_OLD_SCRIPTS/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Cache
+.cache/
+*.cache

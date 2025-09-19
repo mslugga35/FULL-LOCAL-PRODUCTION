@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:32.726Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **MAX** 🔥\nMatch Point Bets Full Card Learner Tien 5 units Ethan Quinn 2 units Tabilo/Harris 022.5 2 units Mackenzie Mc Donald 2 units Yi Zhou +4.5 2 units -155 (5u MAX)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8496.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [
+      {
+        "away": "Tabilo",
+        "home": "Harris"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Match Point Bets Full Card Learner Tien -155 5 units MAX Ethan Quinn +105 2 units Tabilo/Harris 022.5 -125 2 units Mackenzie Mc Donald -154 2 units Yi Zhou +4.5 -120 2 units",
+        "bet": "Match Point Bets Full Card Learner Tien 5 units Ethan Quinn 2 units Tabilo/Harris 022.5 2 units Mackenzie Mc Donald 2 units Yi Zhou +4.5 2 units",
+        "odds": "-155",
+        "units": "5u MAX",
+        "type": "spread"
+      }
+    ],
+    "capper": null,
+    "confidence": "MAX",
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-09-17T18:29:39.375Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **POD** 🔥\nBETS Dirty Bubble Bets KBO NC Dinos F5 ML () 2 units Kiwoom F5 +0.5 () 1 units Hanwha TT 04.5 () 0.75 units KBO Lotto () 0.25 units 2 units POD was sent out many hours ago, it now sits @ so if that scares you feel free to cut it in half. Good chance of rainouts across the board so catch me doing the Birthday Rain Dance Bet Placed 4 Pick Parlay CASH OUT Hanwha Eagles Moneyline Hanwha Eagles @ KIA Tigers Today 5:30 AM Samsung Lions Moneyline Lotte Giants @ Samsung Lions Today 5:30 AM NC Dinos Moneyline SSG Landers @ NC Dinos Today 2:00 AM Kiwoom Heroes Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM -122 (2u)\n_Posted at 5:30 AM_",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_012240_8501.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [
+      {
+        "away": "Hanwha Eagles",
+        "home": "KIA Tigers"
+      },
+      {
+        "away": "Lotte Giants",
+        "home": "Samsung Lions"
+      },
+      {
+        "away": "SSG Landers",
+        "home": "NC Dinos"
+      },
+      {
+        "away": "Kiwoom Heroes",
+        "home": "Doosan Bears"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "BETS Dirty Bubble Bets KBO NC Dinos F5 ML (-122) 2 units Kiwoom F5 +0.5 (-122) 1 units Hanwha TT 04.5 (-115) 0.75 units KBO Lotto (+1077) 0.25 units 2 units POD was sent out many hours ago, it now sits @ +100 so if that scares you feel free to cut it in half. Good chance of rainouts across the board so catch me doing the Birthday Rain Dance Bet Placed 4 Pick Parlay CASH OUT +1077 Hanwha Eagles Moneyline Hanwha Eagles @ KIA Tigers Today 5:30 AM Samsung Lions Moneyline Lotte Giants @ Samsung Lions Today 5:30 AM NC Dinos Moneyline SSG Landers @ NC Dinos Today 2:00 AM Kiwoom Heroes Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM",
+        "bet": "BETS Dirty Bubble Bets KBO NC Dinos F5 ML () 2 units Kiwoom F5 +0.5 () 1 units Hanwha TT 04.5 () 0.75 units KBO Lotto () 0.25 units 2 units POD was sent out many hours ago, it now sits @ so if that scares you feel free to cut it in half. Good chance of rainouts across the board so catch me doing the Birthday Rain Dance Bet Placed 4 Pick Parlay CASH OUT Hanwha Eagles Moneyline Hanwha Eagles @ KIA Tigers Today 5:30 AM Samsung Lions Moneyline Lotte Giants @ Samsung Lions Today 5:30 AM NC Dinos Moneyline SSG Landers @ NC Dinos Today 2:00 AM Kiwoom Heroes Moneyline Kiwoom Heroes @ Doosan Bears Today 5:30 AM",
+        "odds": "-122",
+        "units": "2u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": "POD",
+    "timestamp": "5:30 AM"
+  },
+  "sent_to_discord": false
+}

@@ -1,0 +1,9 @@
+[2025-09-14T14-51-49-561Z] CONFIG AUDIT
+✓ unchanged: .env (93176867b5d2)
+✓ unchanged: discord_sender.js (53ea7cc6a840)
+✓ unchanged: forwarder.py (b4dc3e0cc7fc)
+✓ unchanged: telegram_to_discord.py (5b150250cd64)
+✓ unchanged: message_router.js (2daeecdf0d30)
+❌ missing: /root/bots/ocr_processor.js
+✓ unchanged: paid_webhook_sender.js (f4f75c828fc1)
+✓ unchanged: watchdog-pro.js (03d92ee1690b)

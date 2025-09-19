@@ -1,0 +1,19 @@
+{
+  "source": "telegram",
+  "channel": "telegram", 
+  "chat_id": 2592669126,
+  "chat_title": "CAPPERS FREE💥",
+  "chat_username": null,
+  "message_id": 99999,
+  "text": "TEST MESSAGE - This is a test to verify webhook delivery",
+  "has_media": false,
+  "needs_ocr": false,
+  "timestamp": "2025-09-15T16:49:32-04:00",
+  "created_utc": 1757969372,
+  "routed_from": "inbox",
+  "routed_to": "free_cappers",
+  "routed_at": "2025-09-15T16:49:32-04:00",
+  "ocr_text": "",
+  "ocr_done": false,
+  "ocr_empty": true
+}

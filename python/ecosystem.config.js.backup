@@ -1,0 +1,69 @@
+module.exports = {
+  apps: [
+    {
+      name: 'discord-forwarder-bot',
+      script: './discord-forwarder-bot/production-bot.js',
+      env: { 
+        NODE_ENV: 'production',
+        PORT: 3001
+      }
+    },
+    {
+      name: 'fetch-today-bot',
+      script: './discord-forwarder-bot/always-fetch-today.js',
+      env: { 
+        PORT: 3002, 
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'discord-sender',
+      script: './discord-forwarder-bot/discord_sender.js',
+      env: { 
+        PORT: 3003,
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'paid-sender',
+      script: './discord-forwarder-bot/paid_discord_sender.js',
+      env: { 
+        PORT: 3004,
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'unified-collector',
+      script: './discord-forwarder-bot/unified_collector.js',
+      env: { 
+        PORT: 3005,
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'discord-forwarder-ocr',
+      script: './discord-forwarder-bot/index-ocr-improved.js',
+      env: { 
+        OCR_PORT: 3006,
+        PORT: 3006,
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'paidcappers-bot',
+      script: './paidcappers/telegram_discord_bot.js',
+      env: { 
+        PORT: 3007,
+        NODE_ENV: 'production' 
+      }
+    },
+    {
+      name: 'pluto-betting-bot',
+      script: './pluto-betting/dist/index.js',
+      env: { 
+        PORT: 3008,
+        NODE_ENV: 'production' 
+      }
+    }
+  ]
+};

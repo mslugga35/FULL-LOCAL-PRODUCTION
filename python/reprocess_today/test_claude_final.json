@@ -1,0 +1,15 @@
+{
+  "source": "telegram",
+  "chat_title": "CAPPERS FREE",
+  "text": "TestCapper",
+  "has_media": true,
+  "media_file": "test_claude_image.jpg",
+  "needs_ocr": true,
+  "ocr_done": true,
+  "timestamp": "2025-09-16T15:46:00",
+  "routed_to": "free_cappers",
+  "ocr_text": "KimsPicks KBO CARD :e: Samsung Lions ml (1.5U) Kiwoom +1.5 (1U) Lg Twins -1 (1U)",
+  "ocr_empty": false,
+  "ocr_processed_at": "2025-09-16T20:04:52.774Z",
+  "ocr_method": "claude"
+}

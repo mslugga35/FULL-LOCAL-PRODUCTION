@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:29:44.318Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n**ISW**\n@Mbplay.cappersfree stree ISW TBALL WINNERS Cubs 1 units 3 K bet hers free This is a read only chat fro -140 (1u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_122102_11559.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": null,
+    "teams": [],
+    "picks": [
+      {
+        "raw": "@Mbplay.cappersfree stree ISW TBALL WINNERS Cubs -140 1 units 3 K bet hers free This is a read only chat fro",
+        "bet": "@Mbplay.cappersfree stree ISW TBALL WINNERS Cubs 1 units 3 K bet hers free This is a read only chat fro",
+        "odds": "-140",
+        "units": "1u",
+        "type": null
+      }
+    ],
+    "capper": "ISW",
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

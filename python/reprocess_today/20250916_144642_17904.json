@@ -1,0 +1,16 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17904,
+  "text": "Now you can cash out original bet",
+  "has_media": false,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T14:46:42.739012",
+  "created_utc": 1758048402,
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T18:46:45.937Z"
+}

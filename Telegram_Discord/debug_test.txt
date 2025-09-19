@@ -1,0 +1,9 @@
+Debug Test Results
+==================
+
+Input: 'vegasmirabet\n➖➖➖➖➖\nDM➡️@cappersfree✅'
+Output: '**free_cappers**\n**vegasmirabet**\nvegasmirabet'
+
+Expected: vegasmirabet mapped to canonical name
+Contains vegasmirabet: True
+Bold formatting: True

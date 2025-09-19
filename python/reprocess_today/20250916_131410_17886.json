@@ -1,0 +1,16 @@
+{
+  "source": "telegram",
+  "channel": "telegram",
+  "chat_id": 2177758646,
+  "chat_title": "🌐 UATB 🌐",
+  "chat_username": null,
+  "message_id": 17886,
+  "text": "It’s -130 right now",
+  "has_media": false,
+  "needs_ocr": false,
+  "timestamp": "2025-09-16T13:14:10.967723",
+  "created_utc": 1758042850,
+  "routed_from": "inbox",
+  "routed_to": "paid_uatb",
+  "routed_at": "2025-09-16T17:14:15.053Z"
+}

@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-17T18:30:02.975Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n🔥 **MAX** 🔥\n*MLB*\n10 units MLB WHALEPLAY DODGERS ML ersfree ☑S tersfree 3 units MLB POD ROYALS ML ersfree 1 units ON EACH ersfree METS ML MLY 90 RANGERS ML 9 13:08 (10u MAX)\n_Posted at 13:08_",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_132504_11595.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [],
+    "picks": [
+      {
+        "raw": "10 units MLB MAX WHALEPLAY DODGERS ML ersfree ☑S tersfree 3 units MLB POD ROYALS ML ersfree 1 units ON EACH ersfree METS ML MLY 90 RANGERS ML 9 13:08",
+        "bet": "10 units MLB WHALEPLAY DODGERS ML ersfree ☑S tersfree 3 units MLB POD ROYALS ML ersfree 1 units ON EACH ersfree METS ML MLY 90 RANGERS ML 9 13:08",
+        "odds": null,
+        "units": "10u MAX",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": "MAX",
+    "timestamp": "13:08"
+  },
+  "sent_to_discord": false
+}

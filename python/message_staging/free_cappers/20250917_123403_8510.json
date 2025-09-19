@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-17T18:29:57.921Z",
+  "channelName": "free_cappers",
+  "source": "google_vision",
+  "ocr_processor": "google_vision",
+  "ocr_text": "**free_cappers**\n*MLB*\nCard Card UEFA LEARLOCKS Paphos FC OVER .5 TT GOALS Ajax vs inter BTTS Liverpool 1 H ML MLB Cubs ML Dbacks F5 ML -130 (1.5u)",
+  "has_media": true,
+  "mediaPath": "/root/inbox/20250917_123403_8510.jpg",
+  "capperName": "Unknown",
+  "bettingInfo": {
+    "sport": "MLB",
+    "teams": [
+      {
+        "away": "130 Ajax",
+        "home": "inter BTTS"
+      }
+    ],
+    "picks": [
+      {
+        "raw": "Card Card UEFA LEARLOCKS Paphos FC OVER .5 TT GOALS 1.5u -130 Ajax vs inter BTTS 1.5u -145 Liverpool 1 H ML -105 1.5u MLB Cubs ML-140 1.5u Dbacks F5 ML -110 1.5u",
+        "bet": "Card Card UEFA LEARLOCKS Paphos FC OVER .5 TT GOALS Ajax vs inter BTTS Liverpool 1 H ML MLB Cubs ML Dbacks F5 ML",
+        "odds": "-130",
+        "units": "1.5u",
+        "type": "moneyline"
+      }
+    ],
+    "capper": null,
+    "confidence": null,
+    "timestamp": null
+  },
+  "sent_to_discord": false
+}

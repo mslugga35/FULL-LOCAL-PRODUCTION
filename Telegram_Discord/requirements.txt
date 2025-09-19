@@ -1,0 +1,8 @@
+telethon==1.36.0
+python-dotenv==1.0.1
+PyYAML==6.0.2
+tenacity==8.5.0
+requests==2.32.3
+discord.py==2.4.0
+# google-cloud-vision is optional; enable if you plan to use OCR
+# google-cloud-vision==3.7.4
