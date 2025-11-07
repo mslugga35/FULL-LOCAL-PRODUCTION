@@ -1,0 +1,78 @@
+name: Claude CI Failure Fix
+# Automatically fix failing CI/CD tests with Claude Code
+# Based on: https://github.com/anthropics/claude-code-action/examples
+
+on:
+  workflow_run:
+    workflows: ["*"]  # Trigger on any workflow
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  auto-fix-failures:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Get Failure Logs
+        id: logs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const run_id = ${{ github.event.workflow_run.id }};
+            const logs = await github.rest.actions.downloadWorkflowRunLogs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run_id
+            });
+
+            // Save logs for Claude to analyze
+            require('fs').writeFileSync('ci_failure_logs.txt', logs.data);
+            return 'Logs downloaded';
+
+      - name: Run Claude Code Fix
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          prompt: |
+            The CI workflow "${{ github.event.workflow_run.name }}" failed.
+
+            Workflow Details:
+            - Branch: ${{ github.event.workflow_run.head_branch }}
+            - Commit: ${{ github.event.workflow_run.head_sha }}
+            - Run URL: ${{ github.event.workflow_run.html_url }}
+
+            Please:
+            1. Analyze the failure logs in ci_failure_logs.txt
+            2. Identify the root cause of the failure
+            3. Implement fixes for the failing tests or build issues
+            4. Verify the fix resolves the issue
+            5. Create a PR with the fix and a clear explanation
+
+            Focus on:
+            - Test failures
+            - Build errors
+            - Linting issues
+            - Type errors
+            - Dependency issues
+
+          mode: auto
+          model: claude-sonnet-4-5-20250929
+          max_tokens: 12000
+
+      - name: Notify on Slack (Optional)
+        if: failure()
+        run: |
+          echo "CI fix attempt failed for workflow: ${{ github.event.workflow_run.name }}"
+          # Add Slack webhook notification here if needed
