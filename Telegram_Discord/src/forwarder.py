@@ -308,8 +308,18 @@ def main():
                     else:
                         ocr_text = ""
                     # FREE posts omit the bold label and focus on clean picks text
-                    formatted = format_clean_picks("", content_raw, ocr_text)
+                    # Enable dedup checking for FREE channels
+                    formatted = format_clean_picks("", content_raw, ocr_text, check_dedup=True)
                     file_path = None  # enforce text-only on FREE
+
+                # Skip if formatter returned None (recap or duplicate)
+                if formatted is None:
+                    skipped_dir = os.path.join(archive_base, time.strftime("%Y%m%d"), queue, "skipped")
+                    os.makedirs(skipped_dir, exist_ok=True)
+                    shutil.move(claimed_path, os.path.join(skipped_dir, src_path.name))
+                    logger.info(f"⏭️ Skipped (recap/duplicate): {queue}/{src_path.name}")
+                    made_progress = True
+                    continue
 
                 # --- Send to Discord ---
                 if transport == "webhook":

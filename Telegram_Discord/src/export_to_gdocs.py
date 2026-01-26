@@ -45,12 +45,18 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BASE_DIR = Path(__file__).parent.parent
+STATE_DIR = BASE_DIR / "state"
+STATE_DIR.mkdir(exist_ok=True)
 # Read from BOTH sources for complete real-time + archived picks
 MESSAGE_QUEUE_DIR = BASE_DIR / "message_queue"
 SENT_ARCHIVE_DIR = BASE_DIR / "sent_archive"
 GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH")
-GOOGLE_DOC_ID = os.getenv("GOOGLE_DOC_ID")
+GOOGLE_DOC_ID = os.getenv("GOOGLE_DOC_ID")  # Default/fallback doc
+GOOGLE_DRIVE_FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID", "")  # Optional folder for daily docs
 TIMEZONE = pytz.timezone(os.getenv("TIMEZONE", "America/New_York"))
+
+# Daily doc tracking file
+DAILY_DOCS_FILE = STATE_DIR / "daily_docs.json"
 
 # Free channels configuration
 # Only include CAPPERS FREE channel
@@ -77,14 +83,32 @@ OCR_CACHE_DIR = BASE_DIR / "ocr_cache"
 OCR_CACHE_DIR.mkdir(exist_ok=True)
 
 
+def load_daily_docs() -> dict:
+    """Load daily doc ID tracking from JSON file"""
+    if DAILY_DOCS_FILE.exists():
+        try:
+            with open(DAILY_DOCS_FILE, 'r') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+
+def save_daily_docs(docs: dict):
+    """Save daily doc ID tracking to JSON file"""
+    with open(DAILY_DOCS_FILE, 'w') as f:
+        json.dump(docs, f, indent=2)
+
+
 class GoogleDocsExporter:
-    """Handles exporting picks to Google Docs"""
+    """Handles exporting picks to Google Docs with daily rotation"""
 
     def __init__(self):
         self.credentials = None
         self.docs_service = None
         self.drive_service = None
         self._authenticate()
+        self.daily_docs = load_daily_docs()
 
     def _authenticate(self):
         """Authenticate with Google APIs using service account"""
@@ -106,14 +130,85 @@ class GoogleDocsExporter:
 
         logger.info("✅ Authenticated with Google APIs")
 
-    def update_document(self, content: str):
+    def get_or_create_daily_doc(self, date_str: str = None) -> str:
+        """
+        Get or create a Google Doc for the specified date.
+        Returns doc ID for the day, creating one if needed.
+        
+        Args:
+            date_str: Date in YYYYMMDD format (default: today)
+        
+        Returns:
+            Google Doc ID for the day
+        """
+        if date_str is None:
+            date_str = datetime.now(TIMEZONE).strftime("%Y%m%d")
+        
+        # Check if we already have a doc for this date
+        if date_str in self.daily_docs:
+            doc_id = self.daily_docs[date_str]
+            logger.info(f"Using existing doc for {date_str}: {doc_id}")
+            return doc_id
+        
+        # If no folder ID configured, use the default doc
+        if not GOOGLE_DRIVE_FOLDER_ID:
+            logger.info(f"No GOOGLE_DRIVE_FOLDER_ID set, using default doc: {GOOGLE_DOC_ID}")
+            return GOOGLE_DOC_ID
+        
+        # Create a new document for today
+        try:
+            date_formatted = datetime.strptime(date_str, "%Y%m%d").strftime("%B %d, %Y")
+            doc_title = f"Free Picks - {date_formatted}"
+            
+            # Create the document
+            doc = self.docs_service.documents().create(body={
+                'title': doc_title
+            }).execute()
+            
+            new_doc_id = doc.get('documentId')
+            
+            # Move to the picks folder if specified
+            if GOOGLE_DRIVE_FOLDER_ID:
+                # Get current parents
+                file = self.drive_service.files().get(
+                    fileId=new_doc_id,
+                    fields='parents'
+                ).execute()
+                previous_parents = ",".join(file.get('parents', []))
+                
+                # Move to new folder
+                self.drive_service.files().update(
+                    fileId=new_doc_id,
+                    addParents=GOOGLE_DRIVE_FOLDER_ID,
+                    removeParents=previous_parents,
+                    fields='id, parents'
+                ).execute()
+            
+            # Save to tracking
+            self.daily_docs[date_str] = new_doc_id
+            save_daily_docs(self.daily_docs)
+            
+            logger.info(f"✅ Created new doc for {date_str}: {new_doc_id}")
+            logger.info(f"📄 https://docs.google.com/document/d/{new_doc_id}/edit")
+            
+            return new_doc_id
+            
+        except HttpError as error:
+            logger.error(f"❌ Error creating daily doc: {error}")
+            # Fall back to default doc
+            return GOOGLE_DOC_ID
+
+    def update_document(self, content: str, doc_id: str = None):
         """Update Google Doc with new content"""
-        if not GOOGLE_DOC_ID:
-            raise ValueError("GOOGLE_DOC_ID not set in .env")
+        if doc_id is None:
+            doc_id = GOOGLE_DOC_ID
+        
+        if not doc_id:
+            raise ValueError("No doc_id provided and GOOGLE_DOC_ID not set in .env")
 
         try:
             # Clear existing content
-            doc = self.docs_service.documents().get(documentId=GOOGLE_DOC_ID).execute()
+            doc = self.docs_service.documents().get(documentId=doc_id).execute()
 
             # Get current document length
             content_length = doc.get('body').get('content')[-1].get('endIndex', 1)
@@ -144,12 +239,12 @@ class GoogleDocsExporter:
 
             # Execute batch update
             result = self.docs_service.documents().batchUpdate(
-                documentId=GOOGLE_DOC_ID,
+                documentId=doc_id,
                 body={'requests': requests}
             ).execute()
 
-            logger.info(f"✅ Document updated successfully: {GOOGLE_DOC_ID}")
-            return True
+            logger.info(f"✅ Document updated successfully: {doc_id}")
+            return doc_id  # Return the doc_id so caller knows which doc was updated
 
         except HttpError as error:
             logger.error(f"❌ Error updating document: {error}")
@@ -400,6 +495,11 @@ class PicksAggregator:
         time_formatted = now.strftime("%I:%M %p %Z")
 
         lines = []
+        # Date marker for automated parsers (dailyai-picks uses this)
+        date_marker = now.strftime("%Y-%m-%d")
+        lines.append(f"[PICKS_DATE:{date_marker}]")
+        lines.append("⚠️ Recaps/yesterday results are filtered. Only TODAY's picks below.")
+        lines.append("")
         lines.append(f"FREE PICKS - {date_formatted}")
         lines.append(f"Last updated: {time_formatted}")
         lines.append("═" * 50)
@@ -435,16 +535,16 @@ class PicksAggregator:
                             # Use the actual Telegram message date
                             pick_time = datetime.fromisoformat(str(raw_date))
                             pick_time = pick_time.astimezone(TIMEZONE)
-                            time_str = pick_time.strftime("%I:%M %p")
+                            time_str = f"{pick_time.strftime('%I:%M %p')} EST {pick_time.month}/{pick_time.day}"
                         elif ts_iso:
                             # Fallback to ts_iso
                             pick_time = datetime.fromisoformat(ts_iso.replace('Z', '+00:00'))
                             pick_time = pick_time.astimezone(TIMEZONE)
-                            time_str = pick_time.strftime("%I:%M %p")
+                            time_str = f"{pick_time.strftime('%I:%M %p')} EST {pick_time.month}/{pick_time.day}"
                         else:
-                            time_str = "??:??"
+                            time_str = "??:?? EST"
                     except Exception:
-                        time_str = "??:??"
+                        time_str = "??:?? EST"
 
                     # Get pick text
                     text = pick.get('text', '').strip()
@@ -549,12 +649,16 @@ def main():
         # Format content
         content = aggregator.format_for_google_docs()
 
-        # Update Google Doc
-        success = exporter.update_document(content)
+        # Get or create today's doc (daily rotation)
+        today_str = datetime.now(TIMEZONE).strftime("%Y%m%d")
+        doc_id = exporter.get_or_create_daily_doc(today_str)
 
-        if success:
+        # Update Google Doc
+        result_doc_id = exporter.update_document(content, doc_id)
+
+        if result_doc_id:
             logger.info(f"✅ Export complete! {total_picks} picks from {channels} channels")
-            logger.info(f"📄 View document: https://docs.google.com/document/d/{GOOGLE_DOC_ID}/edit")
+            logger.info(f"📄 View document: https://docs.google.com/document/d/{result_doc_id}/edit")
             return 0
         else:
             logger.error("❌ Export failed")

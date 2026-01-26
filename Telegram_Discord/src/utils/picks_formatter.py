@@ -1,5 +1,96 @@
 # src/utils/picks_formatter.py
 import re
+import hashlib
+import sqlite3
+from pathlib import Path
+
+# State directory for dedup database
+STATE_DIR = Path(__file__).parent.parent.parent / "state"
+STATE_DIR.mkdir(exist_ok=True)
+DEDUP_DB_PATH = STATE_DIR / "pick_hashes.sqlite3"
+
+# Initialize dedup database
+def _init_dedup_db():
+    """Initialize SQLite database for pick deduplication by content hash"""
+    db = sqlite3.connect(str(DEDUP_DB_PATH), check_same_thread=False)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS seen_picks (
+            content_hash TEXT PRIMARY KEY,
+            capper TEXT,
+            pick_preview TEXT,
+            first_seen DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    db.execute("CREATE INDEX IF NOT EXISTS idx_first_seen ON seen_picks(first_seen)")
+    # Purge entries older than 7 days
+    db.execute("DELETE FROM seen_picks WHERE first_seen < datetime('now', '-7 days')")
+    db.commit()
+    return db
+
+_dedup_db = None
+
+def get_dedup_db():
+    """Get or create dedup database connection"""
+    global _dedup_db
+    if _dedup_db is None:
+        _dedup_db = _init_dedup_db()
+    return _dedup_db
+
+
+def compute_pick_hash(capper: str, text: str) -> str:
+    """Compute MD5 hash of capper + normalized pick text"""
+    # Normalize: lowercase, remove extra whitespace, remove odds variations
+    normalized = re.sub(r'\s+', ' ', (capper or '').lower() + '|' + (text or '').lower()).strip()
+    # Remove odds that might vary slightly (-110 vs -115)
+    normalized = re.sub(r'[+-]\d{3}', '', normalized)
+    return hashlib.md5(normalized.encode()).hexdigest()
+
+
+def is_duplicate_pick(capper: str, text: str) -> bool:
+    """Check if this pick has been seen before (by content hash)"""
+    content_hash = compute_pick_hash(capper, text)
+    db = get_dedup_db()
+    cursor = db.execute("SELECT 1 FROM seen_picks WHERE content_hash = ?", (content_hash,))
+    return cursor.fetchone() is not None
+
+
+def record_pick(capper: str, text: str):
+    """Record a pick's hash to prevent future duplicates"""
+    content_hash = compute_pick_hash(capper, text)
+    db = get_dedup_db()
+    try:
+        preview = (text or '')[:100]
+        db.execute(
+            "INSERT OR IGNORE INTO seen_picks (content_hash, capper, pick_preview) VALUES (?, ?, ?)",
+            (content_hash, capper or 'Unknown', preview)
+        )
+        db.commit()
+    except Exception:
+        pass  # Ignore dedup errors
+
+
+# ---- Recap detection patterns (Phase 1) ----
+RECAP_PATTERNS = [
+    re.compile(r'\byesterday\s+we\s+went\b', re.I),           # "yesterday we went 3-1"
+    re.compile(r'\brecap\b', re.I),                           # "recap" anywhere
+    re.compile(r'\brecord[:\s]+\d+-\d+', re.I),               # "record: 45-30"
+    re.compile(r'\bhit\s+\d+/\d+\s+yesterday\b', re.I),       # "hit 3/4 yesterday"
+    re.compile(r'\bwent\s+\d+-\d+\s+yesterday\b', re.I),      # "went 3-1 yesterday"
+    re.compile(r"\byesterday['\u2019]?s?\s+(picks?|plays?|results?)\b", re.I),  # "yesterday's picks"
+    re.compile(r'\blast\s+night\s+we\b', re.I),               # "last night we"
+    re.compile(r'\b\d+-\d+\s+run\b', re.I),                   # "10-4 run"
+    re.compile(r'\bcashed\s+\d+/\d+\b', re.I),                # "cashed 3/4"
+]
+
+
+def is_recap_message(text: str) -> bool:
+    """Check if message is a recap/results post (not actual picks)"""
+    if not text:
+        return False
+    for pattern in RECAP_PATTERNS:
+        if pattern.search(text):
+            return True
+    return False
 
 # ---- Canonical capper names (your list, cleaned) ----
 KNOWN_CAPPERS = [
@@ -252,13 +343,29 @@ def _normalize_no_play(cleaned: str) -> str | None:
             return "No official play today — back tomorrow."
     return None
 
-def format_clean_picks(label: str, text: str, ocr_text: str) -> str:
+def format_clean_picks(label: str, text: str, ocr_text: str, check_dedup: bool = False) -> str:
+    """
+    Format picks text for Discord output.
+    
+    Args:
+        label: Channel/source label (for PAID channels)
+        text: Raw text content
+        ocr_text: OCR-extracted text from images
+        check_dedup: If True, check/record dedup hashes (default False for backward compat)
+    
+    Returns:
+        Formatted picks text, or None if message should be skipped (recap/duplicate)
+    """
     full = "\n".join([t for t in [text, ocr_text] if t]).strip()
     if not full:
         if label:
             return f"**{label}**\n📸 *[Image]*"
         else:
             return "📸 *[Image]*"
+
+    # Phase 1: Skip recap/results messages
+    if is_recap_message(full):
+        return None  # Signal to skip this message entirely
 
     cleaned = _normalize_text(full)
     if not cleaned:
@@ -295,4 +402,14 @@ def format_clean_picks(label: str, text: str, ocr_text: str) -> str:
         else:
             out.append("📸 *[Image content]*")
 
-    return "\n".join(out).strip()
+    result = "\n".join(out).strip()
+    
+    # Phase 2: Content-based deduplication
+    if check_dedup and picks:
+        pick_text = "\n".join(picks)
+        if is_duplicate_pick(capper, pick_text):
+            return None  # Skip duplicate
+        # Record this pick for future dedup
+        record_pick(capper, pick_text)
+    
+    return result
