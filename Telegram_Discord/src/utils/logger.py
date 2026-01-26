@@ -28,9 +28,10 @@ def setup_logger(name: str, log_file: str = None, level=logging.INFO):
     """
     logger = logging.getLogger(name)
 
-    # Avoid duplicate handlers
+    # Clear existing handlers to prevent duplicates from process reloads
+    # This is critical for PM2 restarts where Python logger state persists
     if logger.handlers:
-        return logger
+        logger.handlers.clear()
 
     logger.setLevel(level)
 

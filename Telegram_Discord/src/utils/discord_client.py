@@ -12,7 +12,6 @@ class DiscordSender:
         self.logger = logger
         self.bot_token = os.getenv("DISCORD_BOT_TOKEN_FREE", "").strip()
 
-    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=2, max=30))
     def send_webhook(self, webhook_env: str, content: str, file_path: str|None=None):
         url = os.getenv(webhook_env, "").strip()
         if not url:
@@ -34,7 +33,6 @@ class DiscordSender:
             raise RuntimeError(f"Webhook send failed: {r.status_code} {r.text[:200]}")
         return r.json() if r.text else {}
 
-    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=2, max=30))
     def send_bot_message(self, channel_id: str, content: str, file_path: str|None=None):
         if not self.bot_token:
             raise RuntimeError("Missing DISCORD_BOT_TOKEN_FREE")

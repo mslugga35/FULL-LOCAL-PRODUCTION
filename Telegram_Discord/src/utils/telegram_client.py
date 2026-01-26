@@ -4,6 +4,8 @@ Telegram client utilities with session management and rate limit handling
 import os
 import asyncio
 import json
+import sqlite3
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict, Any
@@ -119,6 +121,54 @@ def extract_message_data(event) -> Dict[str, Any]:
     return payload
 
 
+def setup_collector_db(inbox_dir: str) -> sqlite3.Connection:
+    """Initialize SQLite database for persistent deduplication"""
+    base_path = Path(inbox_dir).parent
+    state_dir = base_path / "state"
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    db_path = state_dir / "collector.sqlite3"
+    db = sqlite3.connect(str(db_path), check_same_thread=False, isolation_level=None)
+    db.execute("PRAGMA journal_mode=WAL")
+    db.execute("PRAGMA synchronous=NORMAL")
+    db.execute("PRAGMA temp_store=MEMORY")
+    db.execute("PRAGMA auto_vacuum=INCREMENTAL")
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS collected (
+            chat_id TEXT NOT NULL,
+            message_id INTEGER NOT NULL,
+            collected_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (chat_id, message_id)
+        )
+    """)
+    db.execute("CREATE INDEX IF NOT EXISTS idx_collected_at ON collected(collected_at)")
+    db.commit()
+    return db
+
+
+def purge_old_collector(db: sqlite3.Connection, logger=None):
+    """Remove entries older than 24 hours to prevent unbounded growth"""
+    try:
+        db.execute("BEGIN IMMEDIATE")
+        cursor = db.execute("DELETE FROM collected WHERE collected_at < datetime('now','-1 day')")
+        deleted = cursor.rowcount
+        db.execute("COMMIT")
+        db.execute("PRAGMA incremental_vacuum(200)")
+        if logger and deleted > 0:
+            logger.info(f"TTL purge: removed {deleted} entries older than 24h")
+    except Exception as e:
+        if logger:
+            logger.warning(f"TTL purge failed: {e}")
+
+
+def ttl_loop_collector(db: sqlite3.Connection, logger=None, interval_seconds=3600):
+    """Background thread to purge old entries every hour"""
+    import time
+    while True:
+        time.sleep(interval_seconds)
+        purge_old_collector(db, logger)
+
+
 async def start_collector(
     chat_ids: List[int],
     inbox_dir: str,
@@ -126,7 +176,7 @@ async def start_collector(
     logger=None
 ) -> None:
     """
-    Start Telegram message collector
+    Start Telegram message collector with duplicate detection
 
     Args:
         chat_ids: List of Telegram chat IDs to monitor
@@ -135,6 +185,19 @@ async def start_collector(
         logger: Optional logger instance
     """
     Path(inbox_dir).mkdir(parents=True, exist_ok=True)
+
+    # Initialize SQLite database for deduplication
+    db = setup_collector_db(inbox_dir)
+    if logger:
+        logger.info("Collector DB initialized with TTL cleanup")
+
+    # One-shot cleanup of old entries
+    purge_old_collector(db, logger)
+
+    # Start background TTL cleanup thread
+    threading.Thread(target=ttl_loop_collector, args=(db, logger), daemon=True).start()
+    if logger:
+        logger.info("TTL cleanup thread started (purges entries >24h every hour)")
 
     client = build_client()
 
@@ -160,6 +223,19 @@ async def start_collector(
     @client.on(events.NewMessage(chats=chat_ids))
     async def handler(event):
         try:
+            # Check for duplicate in SQLite
+            chat_id = str(event.chat_id)
+            message_id = int(event.message.id)
+
+            try:
+                db.execute("INSERT INTO collected(chat_id, message_id) VALUES (?,?)", (chat_id, message_id))
+                db.commit()
+            except sqlite3.IntegrityError:
+                # Already collected - skip
+                if logger:
+                    logger.info(f"⚠️ Skipping duplicate message: {chat_id}_{message_id}")
+                return
+
             payload = extract_message_data(event)
 
             # Download media if present

@@ -2,27 +2,28 @@ ocr:
   enabled: true
   provider: vision   # or tesseract (not included)
   mode: capper_picks
-  queues: ["free_cappers"]
+  queues: ["free_cappers", "test_channel"]
 forwarder:
   batch_size: 1
-  max_retries: 5
+  max_retries: 3
   retry_backoff_seconds: 2
 
-  # Per-queue minimum spacing between sends (seconds)
-  per_queue_min_interval_seconds:
-    paid_uatb: 0.6
-    paid_diamond: 0.6
-    free_cappers: 0.3
-    cappers_leaked: 0.3
-    exclusive_cappers: 0.3
-    signal_picks: 1.0
-    default: 0.5
+  # Per-channel minimum spacing between sends (seconds)
+  # Discord limit: 5 messages per 5 seconds = 1 message per second
+  per_channel_min_interval_seconds:
+    "1442939395131965561": 1.0  # paid_uatb only
+    "1449483782699749590": 1.0  # paid_diamond (NEW)
+    "1433609814805712896": 1.0  # paid_new_channel + splitthepicks + new_free_channel
+    "1403894557615325216": 1.0  # free_cappers + test_channel
+    "1403894596186017962": 1.0  # cappers_leaked
+    "1403894653660692500": 1.0  # exclusive_cappers
+    default: 1.0
 
-  # When we see a 429, pause this queue for a short time
-  on_429_cooldown_seconds: 30
+  # When we see a 429, pause this channel for longer (Discord rate limit window + buffer)
+  on_429_cooldown_seconds: 90
 
   # Cap very large Retry-After to avoid hour-long sleeps
-  max_retry_after_seconds: 60
+  max_retry_after_seconds: 300
 collector:
   media_download: true
 paths:

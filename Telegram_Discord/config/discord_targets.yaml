@@ -1,10 +1,15 @@
 paid_uatb:
   transport: bot
-  channel_id: 1403837637730762875
+  channel_id: 1442939395131965561
 
 paid_diamond:
+  transport: webhook
+  webhook_env: DISCORD_WEBHOOK_DIAMOND
+  channel_id: 1449483782699749590
+
+paid_new_channel:
   transport: bot
-  channel_id: 1403837637730762875
+  channel_id: 1433609814805712896
 
 free_cappers:
   transport: bot
@@ -21,3 +26,21 @@ exclusive_cappers:
 signal_picks:
   transport: signal
   recipient_id: YOUR_SIGNAL_GROUP_ID  # Replace with your Signal group ID
+
+test_channel:
+  transport: bot
+  channel_id: 1403894557615325216  # Original test location (free_cappers channel)
+
+test_channel_new:
+  transport: webhook
+  webhook_env: DISCORD_WEBHOOK_SPLITTHEPICKS
+  channel_id: 1433609814805712896  # New test location (splitthepicks channel)
+  allow_duplicates: true  # Allow sending messages that were already sent from test_channel
+
+splitthepicks:
+  transport: bot
+  channel_id: 1433609814805712896
+
+new_free_channel:
+  transport: bot
+  channel_id: 1433609814805712896

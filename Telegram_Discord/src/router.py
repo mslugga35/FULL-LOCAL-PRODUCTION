@@ -7,6 +7,8 @@ import sys
 import json
 import time
 import yaml
+import sqlite3
+import threading
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
@@ -46,8 +48,54 @@ else:
 logger = setup_logger("router", "router.log")
 
 
+def setup_router_db():
+    """Initialize SQLite database for persistent deduplication"""
+    state_dir = BASE_PATH / "state"
+    state_dir.mkdir(parents=True, exist_ok=True)
+
+    db_path = state_dir / "router.sqlite3"
+    db = sqlite3.connect(str(db_path), check_same_thread=False, isolation_level=None)
+    db.execute("PRAGMA journal_mode=WAL")
+    db.execute("PRAGMA synchronous=NORMAL")
+    db.execute("PRAGMA temp_store=MEMORY")
+    db.execute("PRAGMA auto_vacuum=INCREMENTAL")
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS seen (
+            chat_id TEXT NOT NULL,
+            message_id INTEGER NOT NULL,
+            seen_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (chat_id, message_id)
+        )
+    """)
+    db.execute("CREATE INDEX IF NOT EXISTS idx_seen_at ON seen(seen_at)")
+    db.commit()
+    return db
+
+
+def purge_old(db, logger_inst=None):
+    """Remove entries older than 24 hours to prevent unbounded growth"""
+    try:
+        db.execute("BEGIN IMMEDIATE")
+        cursor = db.execute("DELETE FROM seen WHERE seen_at < datetime('now','-1 day')")
+        deleted = cursor.rowcount
+        db.execute("COMMIT")
+        db.execute("PRAGMA incremental_vacuum(200)")
+        if logger_inst and deleted > 0:
+            logger_inst.info(f"TTL purge: removed {deleted} entries older than 24h")
+    except Exception as e:
+        if logger_inst:
+            logger_inst.warning(f"TTL purge failed: {e}")
+
+
+def ttl_loop(db, logger_inst=None, interval_seconds=3600):
+    """Background thread to purge old entries every hour"""
+    while True:
+        time.sleep(interval_seconds)
+        purge_old(db, logger_inst)
+
+
 class MessageRouter:
-    """Routes messages from inbox to appropriate queues"""
+    """Routes messages from inbox to appropriate queues with duplicate detection"""
 
     def __init__(self):
         self.inbox_dir = Path(settings["paths"]["inbox"])
@@ -55,14 +103,25 @@ class MessageRouter:
         self.poll_interval = settings.get("router", {}).get("poll_interval", 2)
         self.batch_size = settings.get("router", {}).get("batch_size", 10)
 
+        # SQLite-based persistent deduplication
+        self.db = setup_router_db()
+        self.duplicates_skipped = 0
+
         # Statistics
         self.messages_routed = 0
         self.errors = 0
         self.start_time = datetime.now()
 
+        # One-shot cleanup of old entries
+        purge_old(self.db, logger)
+
+        # Start background TTL cleanup thread
+        threading.Thread(target=ttl_loop, args=(self.db, logger), daemon=True).start()
+        logger.info("Router DB initialized with TTL cleanup (purges entries >24h every hour)")
+
     def route_message(self, message_path: str) -> bool:
         """
-        Route a single message to appropriate queue
+        Route a single message to appropriate queue with duplicate detection
 
         Args:
             message_path: Path to message JSON file
@@ -73,10 +132,31 @@ class MessageRouter:
         try:
             # Read message
             data = read_json(message_path)
-            chat_id = int(data.get("chat_id", 0))
 
-            # Find queue
-            queue_name = ROUTING_MAP.get(chat_id)
+            # Robust key extraction (handle both "id" and "message_id")
+            chat_id = str(data.get("chat_id") or data.get("channel_id") or 0)
+            message_id = int(data.get("message_id") or data.get("id") or 0)
+
+            if not chat_id or not message_id:
+                raise ValueError(f"Missing chat_id/message_id in {Path(message_path).name}")
+
+            # Check for duplicate in SQLite
+            try:
+                self.db.execute("INSERT INTO seen(chat_id, message_id) VALUES (?,?)", (chat_id, message_id))
+                self.db.commit()
+            except sqlite3.IntegrityError:
+                # Already seen - move to duplicates
+                self.duplicates_skipped += 1
+                filename = Path(message_path).name
+                logger.info(f"⚠️ DUPLICATE SKIPPED: {filename} ({chat_id}_{message_id}) - moving to duplicates folder")
+
+                duplicates_dir = self.queue_base / "duplicates"
+                duplicates_dir.mkdir(parents=True, exist_ok=True)
+                move(message_path, str(duplicates_dir))
+                return False
+
+            # Find queue (ROUTING_MAP uses integer keys)
+            queue_name = ROUTING_MAP.get(int(chat_id))
             if not queue_name:
                 logger.warning(f"No route for chat_id={chat_id} from {Path(message_path).name}")
                 # Move to unrouted folder
@@ -85,16 +165,40 @@ class MessageRouter:
                 move(message_path, str(unrouted_dir))
                 return False
 
-            # Route to queue
-            queue_dir = self.queue_base / queue_name
-            queue_dir.mkdir(parents=True, exist_ok=True)
+            # Handle multiple destinations (list) or single destination (string)
+            import shutil
+            if isinstance(queue_name, list):
+                # Multiple destinations - copy to all except the last, move to last
+                destinations = queue_name
+                filename = Path(message_path).name
 
-            new_path = move(message_path, str(queue_dir))
-            logger.info(f"Routed: {Path(message_path).name} → {queue_name}")
-            logger.debug(f"New path: {new_path}")
+                for i, dest in enumerate(destinations):
+                    queue_dir = self.queue_base / dest
+                    queue_dir.mkdir(parents=True, exist_ok=True)
 
-            self.messages_routed += 1
-            return True
+                    if i < len(destinations) - 1:
+                        # Copy to intermediate destinations
+                        dest_path = queue_dir / filename
+                        shutil.copy2(message_path, dest_path)
+                        logger.info(f"Routed (copy): {filename} → {dest}")
+                    else:
+                        # Move to final destination
+                        new_path = move(message_path, str(queue_dir))
+                        logger.info(f"Routed (move): {filename} → {dest}")
+
+                self.messages_routed += 1
+                return True
+            else:
+                # Single destination - original behavior
+                queue_dir = self.queue_base / queue_name
+                queue_dir.mkdir(parents=True, exist_ok=True)
+
+                new_path = move(message_path, str(queue_dir))
+                logger.info(f"Routed: {Path(message_path).name} → {queue_name}")
+                logger.debug(f"New path: {new_path}")
+
+                self.messages_routed += 1
+                return True
 
         except Exception as e:
             self.errors += 1
@@ -135,17 +239,26 @@ class MessageRouter:
         uptime = (datetime.now() - self.start_time).total_seconds()
         uptime_hours = uptime / 3600
 
+        # Get count from DB
+        cursor = self.db.execute("SELECT COUNT(*) FROM seen")
+        db_count = cursor.fetchone()[0]
+
         logger.info("=" * 50)
         logger.info("Router Statistics:")
         logger.info(f"  Messages routed: {self.messages_routed}")
+        logger.info(f"  Duplicates skipped: {self.duplicates_skipped}")
+        logger.info(f"  Unique messages tracked (DB): {db_count}")
         logger.info(f"  Errors: {self.errors}")
         logger.info(f"  Uptime: {uptime_hours:.2f} hours")
 
-        # Queue backlogs
-        for queue_name in ROUTING_MAP.values():
-            backlog = get_queue_backlog(queue_name)
-            if backlog > 0:
-                logger.info(f"  Queue {queue_name}: {backlog} pending")
+        # Queue backlogs (handle both string and list values)
+        for queue_value in ROUTING_MAP.values():
+            # Handle list of queues or single queue
+            queue_names = queue_value if isinstance(queue_value, list) else [queue_value]
+            for queue_name in queue_names:
+                backlog = get_queue_backlog(queue_name)
+                if backlog > 0:
+                    logger.info(f"  Queue {queue_name}: {backlog} pending")
 
         log_health_check(logger, "router", "healthy")
         logger.info("=" * 50)
