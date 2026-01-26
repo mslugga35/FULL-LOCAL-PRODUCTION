@@ -125,7 +125,7 @@ def _run_gdocs_export():
         )
         _gdocs_last_export = time.time()
     except Exception as e:
-        print(f"Google Docs export failed: {e}")
+        pass  # Silently fail - export runs in background thread
 
 
 def trigger_gdocs_export():
