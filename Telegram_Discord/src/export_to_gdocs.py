@@ -32,6 +32,9 @@ except ImportError:
 from dotenv import load_dotenv
 load_dotenv()
 
+# Import recap/result detection from picks_formatter
+from utils.picks_formatter import is_recap_message
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -317,8 +320,23 @@ def extract_text_from_image(image_path: str) -> str:
             # Load image
             img = Image.open(image_path)
 
-            # Prompt for structured extraction
-            prompt = """Extract ONLY the sports picks from this image. Format them cleanly with:
+            # Prompt for structured extraction - MUST detect results vs new picks
+            prompt = """Analyze this sports betting image and determine if it shows:
+A) A NEW PICK (bet not yet placed or pending)
+B) A RESULT/RECEIPT (bet already placed, showing Won/Lost/Settled status, final scores, payouts)
+
+INDICATORS OF A RESULT (return "[RESULT_SCREENSHOT]" if ANY of these):
+- Shows "Won", "Lost", "Push", "Settled", "Finished", "Graded", "Completed"
+- Shows checkmarks (✅) or X marks (❌) next to picks
+- Shows final game scores (like 94-102)
+- Shows payout amounts ($XXX.XX Won, Profit, etc.)
+- Shows "Placed:" with a past date
+- Shows transaction history or bet receipts
+- Shows celebration text like "on point", "cashed", "let's go"
+
+If this is a RESULT screenshot, return ONLY: [RESULT_SCREENSHOT]
+
+If this is a NEW PICK, extract the picks with:
 - Capper name at top (if visible)
 - Each sport as a section header
 - Bullet points for each pick
@@ -331,20 +349,16 @@ COMPLETELY IGNORE AND REMOVE:
 - Telegram/Discord interface elements
 - Any promotional text about contacting cappers
 
-Example format:
+Example format for NEW PICKS:
 BeezoWins VIP Picks
 
 NFL Football:
 • Bills -5.5 (2-Unit)
-• Bills vs Texans over 43.5 (2-Unit)
 
 NBA:
 • Magic -6.5 (2-Unit)
 
-NHL:
-• Canadiens -140
-
-Return ONLY the clean picks, nothing else."""
+Return ONLY "[RESULT_SCREENSHOT]" for results, or clean picks for new bets."""
 
             # Generate structured response
             response = model.generate_content([prompt, img])
@@ -610,6 +624,11 @@ class PicksAggregator:
                                     else:
                                         text = f"[OCR] {ocr_text}"
                                     logger.info(f"OCR extracted text from {Path(media_path).name}")
+
+                    # Filter out recap/result messages (bet slips showing Won/Lost, final scores, etc)
+                    if text and is_recap_message(text):
+                        logger.info(f"Skipping recap/result: {text[:80]}...")
+                        continue
 
                     # Format pick line - only add if there's meaningful text
                     if text:
