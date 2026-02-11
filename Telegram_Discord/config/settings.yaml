@@ -26,9 +26,40 @@ forwarder:
   max_retry_after_seconds: 300
 collector:
   media_download: true
+
+# V2 Pipeline: "Capture First, Filter Later"
+# Phase 1: raw_capture.py - captures EVERYTHING
+# Phase 2a: ocr_processor.py - OCRs all images
+# Phase 2b: pick_classifier.py - soft classification
+# Phase 3: daily_report.py - generates review report
+# Export: export_to_gdocs_v2.py - reads from classified/picks
+capture_v2:
+  enabled: true
+  backfill_messages: 100  # Messages to backfill on startup
+  backfill_max_age_hours: 24  # Only backfill messages from last N hours
+
+classifier:
+  # Confidence threshold for auto-classification
+  # Items below this go to 'unknown' for review
+  confidence_threshold: 0.5
+
+  # Categories
+  categories:
+    - picks      # New betting picks
+    - recaps     # Results (✅❌, Won/Lost)
+    - promos     # Promotions (DM, VIP)
+    - unknown    # Needs human review
+
 paths:
   base: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord"
   inbox: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\inbox"
   queue: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\message_queue"
   archive: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\sent_archive"
   logs: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\logs"
+
+  # V2 Pipeline paths
+  daily_raw: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\daily_raw"
+  daily_processed: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\daily_processed"
+  daily_classified: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\daily_classified"
+  daily_reports: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\daily_reports"
+  ocr_cache: "C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord\\ocr_cache"

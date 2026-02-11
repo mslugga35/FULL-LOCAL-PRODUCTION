@@ -167,13 +167,21 @@ class MessageRouter:
 
             # Handle multiple destinations (list) or single destination (string)
             import shutil
+            
+            # Queues that need vision pre-processing (route to _pending subfolder)
+            vision_queues = settings.get("ocr", {}).get("queues", []) or []
+            
             if isinstance(queue_name, list):
                 # Multiple destinations - copy to all except the last, move to last
                 destinations = queue_name
                 filename = Path(message_path).name
 
                 for i, dest in enumerate(destinations):
-                    queue_dir = self.queue_base / dest
+                    # Check if this queue needs vision processing
+                    if dest in vision_queues:
+                        queue_dir = self.queue_base / dest / "_pending"
+                    else:
+                        queue_dir = self.queue_base / dest
                     queue_dir.mkdir(parents=True, exist_ok=True)
 
                     if i < len(destinations) - 1:
@@ -189,8 +197,12 @@ class MessageRouter:
                 self.messages_routed += 1
                 return True
             else:
-                # Single destination - original behavior
-                queue_dir = self.queue_base / queue_name
+                # Single destination
+                # Check if this queue needs vision processing
+                if queue_name in vision_queues:
+                    queue_dir = self.queue_base / queue_name / "_pending"
+                else:
+                    queue_dir = self.queue_base / queue_name
                 queue_dir.mkdir(parents=True, exist_ok=True)
 
                 new_path = move(message_path, str(queue_dir))

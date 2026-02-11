@@ -12,11 +12,12 @@ from dotenv import load_dotenv
 from src.utils.logger import setup_logger
 from src.utils.picks_formatter import format_clean_picks
 from src.utils.ocr import extract_text_from_image
+from src.utils.vision_formatter import should_use_vision_formatting
 
 # Global variables for Google Docs export
 _gdocs_export_lock = threading.Lock()
 _gdocs_last_export = 0
-_gdocs_export_debounce = 3  # Wait 3 seconds before triggering export
+_gdocs_export_debounce = 300  # Wait 5 minutes between exports (was 3 seconds)
 
 # --- Discord (sender + rate-limit shim) ---
 from src.utils.discord_client import DiscordSender
@@ -298,18 +299,52 @@ def main():
                         formatted = f"**{label}**"
                     # keep file_path as-is so image/video gets sent
                 else:
-                    # FREE: text-only. Prefer OCR text if configured for this queue.
-                    if queue in ocr_queues and file_path and os.path.exists(file_path):
+                    # FREE: text-only. Try vision processor first, then fall back to OCR.
+                    formatted = None
+                    
+                    # Check if vision processor has pre-processed this message
+                    use_vision = cfg.get("use_vision", True)  # Default to True for free queues
+                    if use_vision and queue in ocr_queues:
                         try:
-                            ocr_text = extract_text_from_image(file_path) or ""
+                            has_vision, vision_formatted = should_use_vision_formatting(data, queue)
+                            if has_vision and vision_formatted:
+                                formatted = vision_formatted
+                                logger.info(f"📊 Using vision-formatted picks for {queue}/{src_path.name}")
                         except Exception as e:
-                            logger.warning(f"OCR failed for {queue}: {e}")
+                            logger.warning(f"Vision formatter check failed: {e}")
+                    
+                    # Fall back to OCR if vision didn't provide formatting
+                    if formatted is None:
+                        if queue in ocr_queues and file_path and os.path.exists(file_path):
+                            try:
+                                ocr_text = extract_text_from_image(file_path) or ""
+                            except Exception as e:
+                                logger.warning(f"OCR failed for {queue}: {e}")
+                                ocr_text = ""
+                        else:
                             ocr_text = ""
-                    else:
-                        ocr_text = ""
-                    # FREE posts omit the bold label and focus on clean picks text
-                    # Enable dedup checking for FREE channels
-                    formatted = format_clean_picks("", content_raw, ocr_text, check_dedup=True)
+                        
+                        # FREE posts omit the bold label and focus on clean picks text
+                        # Check if using smart filter (AI-based) or legacy pattern matching
+                        use_smart_filter = cfg.get("use_smart_filter", False)
+                        
+                        if use_smart_filter:
+                            # Use smart AI-based recap detection
+                            from src.utils.smart_recap_filter import should_filter_message
+                            should_filter, filter_reason = should_filter_message(content_raw, ocr_text)
+                            if should_filter:
+                                skipped_dir = os.path.join(archive_base, time.strftime("%Y%m%d"), queue, "skipped")
+                                os.makedirs(skipped_dir, exist_ok=True)
+                                shutil.move(claimed_path, os.path.join(skipped_dir, src_path.name))
+                                logger.info(f"⏭️ Smart filtered ({filter_reason}): {queue}/{src_path.name}")
+                                made_progress = True
+                                continue
+                            # Not a recap - format without dedup check
+                            formatted = format_clean_picks("", content_raw, ocr_text, check_dedup=False)
+                        else:
+                            # Legacy: use pattern-based dedup
+                            formatted = format_clean_picks("", content_raw, ocr_text, check_dedup=True)
+                    
                     file_path = None  # enforce text-only on FREE
 
                 # Skip if formatter returned None (recap or duplicate)

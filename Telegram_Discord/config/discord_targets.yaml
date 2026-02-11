@@ -14,6 +14,7 @@ paid_new_channel:
 free_cappers:
   transport: bot
   channel_id: 1403894557615325216
+  use_smart_filter: true  # Use AI-based smart filter instead of pattern matching
 
 cappers_leaked:
   transport: bot

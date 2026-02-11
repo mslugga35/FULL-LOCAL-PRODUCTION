@@ -32,8 +32,17 @@ except ImportError:
 from dotenv import load_dotenv
 load_dotenv()
 
-# Import recap/result detection from picks_formatter
-from utils.picks_formatter import is_recap_message
+# Import SMART recap/result detection (replaces old pattern-based filter)
+from src.utils.smart_recap_filter import should_filter_message
+
+# Import vision formatter for structured picks
+try:
+    from src.utils.vision_formatter import get_vision_processed_picks, format_structured_picks
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Vision formatter not available, using OCR fallback")
 
 # Configure logging
 logging.basicConfig(
@@ -587,11 +596,28 @@ class PicksAggregator:
                             filtered_lines.append(text_line)
                         text = '\n'.join(filtered_lines).strip()
 
-                    # If no text OR very short text (just a name) but has image, try OCR
+                    # If no text OR very short text (just a name) but has image, try vision/OCR
                     # Short text (< 30 chars) is likely just a capper name after filtering
                     if pick.get('has_media') and pick.get('media_path') and (not text or len(text) < 30):
                         media_path = pick.get('media_path')
-                        if os.path.exists(media_path):
+                        ocr_text = ""
+                        
+                        # Try vision-processed data first (structured picks)
+                        msg_id = pick.get('id')
+                        if VISION_AVAILABLE and msg_id:
+                            vision_data = get_vision_processed_picks(msg_id, 'free_cappers')
+                            if vision_data and vision_data.get('picks'):
+                                # Format structured picks for display
+                                formatted_picks = format_structured_picks(
+                                    vision_data['picks'],
+                                    vision_data.get('capper_hint')
+                                )
+                                if formatted_picks:
+                                    ocr_text = formatted_picks
+                                    logger.info(f"📊 Using vision picks for msg {msg_id}")
+                        
+                        # Fall back to Gemini OCR if no vision data
+                        if not ocr_text and os.path.exists(media_path):
                             ocr_text = extract_text_from_image(media_path)
                             if ocr_text:
                                 # Also filter OCR output (in case watermarks are in image)
@@ -625,9 +651,12 @@ class PicksAggregator:
                                         text = f"[OCR] {ocr_text}"
                                     logger.info(f"OCR extracted text from {Path(media_path).name}")
 
-                    # Filter out recap/result messages (bet slips showing Won/Lost, final scores, etc)
-                    if text and is_recap_message(text):
-                        logger.info(f"Skipping recap/result: {text[:80]}...")
+                    # Filter out recap/result messages using SMART filter
+                    # Combines text + OCR and needs multiple indicators to filter
+                    combined_text = f"{text}\n{ocr_text if 'ocr_text' in dir() else ''}".strip()
+                    should_filter, filter_reason = should_filter_message(text, ocr_text if 'ocr_text' in dir() else '')
+                    if should_filter:
+                        logger.info(f"Smart filtered ({filter_reason}): {text[:60]}...")
                         continue
 
                     # Format pick line - only add if there's meaningful text

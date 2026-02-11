@@ -169,19 +169,144 @@ def ttl_loop_collector(db: sqlite3.Connection, logger=None, interval_seconds=360
         purge_old_collector(db, logger)
 
 
+async def backfill_messages(
+    client: TelegramClient,
+    chat_ids: List[int],
+    inbox_dir: str,
+    db: sqlite3.Connection,
+    media_download: bool = True,
+    limit: int = 30,
+    max_age_hours: int = 4,
+    logger=None
+) -> int:
+    """
+    Backfill last N messages from each chat on startup.
+    Skips already-collected messages via the sqlite DB.
+    Only backfills messages from the last max_age_hours to prevent resurfacing old picks.
+    
+    Returns:
+        Total number of new messages collected
+    """
+    total_new = 0
+    
+    # Time cutoff - only backfill messages newer than this
+    from datetime import timedelta, timezone
+    cutoff_time = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
+    if logger:
+        logger.info(f"Backfill cutoff: only messages after {cutoff_time.isoformat()}")
+    
+    # Cache chat titles to avoid repeated API calls
+    chat_titles: Dict[int, str] = {}
+    
+    for chat_id in chat_ids:
+        try:
+            if logger:
+                logger.info(f"Backfilling chat {chat_id} (last {limit} messages)...")
+            
+            # Get chat title once per chat (not per message)
+            if chat_id not in chat_titles:
+                try:
+                    entity = await client.get_entity(chat_id)
+                    chat_titles[chat_id] = getattr(entity, "title", None)
+                except Exception:
+                    chat_titles[chat_id] = None
+            
+            new_count = 0
+            skipped_old = 0
+            async for message in client.iter_messages(chat_id, limit=limit):
+                try:
+                    # Skip messages older than cutoff time (prevents resurfacing old picks)
+                    if message.date and message.date < cutoff_time:
+                        skipped_old += 1
+                        continue
+                    
+                    # Check for duplicate
+                    msg_chat_id = str(chat_id)
+                    msg_id = int(message.id)
+                    
+                    try:
+                        db.execute("INSERT INTO collected(chat_id, message_id) VALUES (?,?)", (msg_chat_id, msg_id))
+                        db.commit()
+                    except sqlite3.IntegrityError:
+                        # Already collected - skip silently
+                        continue
+                    
+                    # Extract message data
+                    media_type = "text"
+                    if isinstance(message.media, MessageMediaPhoto):
+                        media_type = "photo"
+                    elif isinstance(message.media, MessageMediaDocument):
+                        media_type = "document"
+                    elif message.media:
+                        media_type = "other_media"
+                    
+                    payload = {
+                        "id": message.id,
+                        "chat_id": chat_id,
+                        "chat_title": chat_titles.get(chat_id),
+                        "sender_id": message.sender_id,
+                        "type": media_type,
+                        "text": message.message or "",
+                        "media_path": None,
+                        "ts_iso": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                        "has_media": bool(message.media),
+                        "raw": message.to_dict(),
+                        "backfilled": True,  # Mark as backfilled
+                    }
+                    
+                    # Download media if present
+                    if message.media and media_download:
+                        media_dir = Path(inbox_dir) / "media" / datetime.now().strftime("%Y%m%d")
+                        media_path = await download_media_safe(client, message.media, str(media_dir), logger)
+                        if media_path:
+                            payload["media_path"] = media_path
+                    
+                    # Save to inbox
+                    msg_filename = f"{chat_id}_{message.id}_{datetime.now().strftime('%H%M%S')}.json"
+                    out_path = Path(inbox_dir) / msg_filename
+                    
+                    with open(out_path, 'w', encoding='utf-8') as f:
+                        json.dump(payload, f, ensure_ascii=False, indent=2, default=str)
+                    
+                    new_count += 1
+                    
+                except Exception as e:
+                    if logger:
+                        logger.warning(f"Error backfilling message {message.id}: {e}")
+                    continue
+            
+            if logger:
+                if new_count > 0 or skipped_old > 0:
+                    logger.info(f"  → Chat {chat_id}: {new_count} new, {skipped_old} skipped (older than {max_age_hours}h)")
+            
+            total_new += new_count
+            await asyncio.sleep(1)  # Rate limit between chats
+            
+        except FloodWaitError as e:
+            await handle_flood_wait(e, logger)
+        except Exception as e:
+            if logger:
+                logger.warning(f"Error backfilling chat {chat_id}: {e}")
+            continue
+    
+    return total_new
+
+
 async def start_collector(
     chat_ids: List[int],
     inbox_dir: str,
     media_download: bool = True,
+    backfill_count: int = 30,
     logger=None
 ) -> None:
     """
-    Start Telegram message collector with duplicate detection
+    Start Telegram message collector with duplicate detection and backfill
 
     Args:
         chat_ids: List of Telegram chat IDs to monitor
         inbox_dir: Directory to save messages
         media_download: Whether to download media
+        backfill_count: Number of messages to backfill per chat on startup (0 to disable)
         logger: Optional logger instance
     """
     Path(inbox_dir).mkdir(parents=True, exist_ok=True)
@@ -202,7 +327,7 @@ async def start_collector(
     client = build_client()
 
     # Connect with retry logic
-    max_connect_retries = 3
+    max_connect_retries = 5
     for attempt in range(max_connect_retries):
         try:
             await client.start()
@@ -219,6 +344,18 @@ async def start_collector(
     if logger:
         logger.info(f"Telegram collector started. Monitoring {len(chat_ids)} chats")
         logger.info(f"Chat IDs: {chat_ids}")
+    
+    # Backfill recent messages on startup
+    if backfill_count > 0:
+        if logger:
+            logger.info(f"Starting backfill (last {backfill_count} messages per chat)...")
+        try:
+            total = await backfill_messages(client, chat_ids, inbox_dir, db, media_download, backfill_count, max_age_hours=4, logger=logger)
+            if logger:
+                logger.info(f"Backfill complete: {total} new messages collected")
+        except Exception as e:
+            if logger:
+                logger.warning(f"Backfill failed (continuing anyway): {e}")
 
     @client.on(events.NewMessage(chats=chat_ids))
     async def handler(event):
@@ -265,22 +402,83 @@ async def start_collector(
             if logger:
                 logger.error(f"Error processing message: {e}", exc_info=True)
 
-    # Health check task
+    # Health check task with auto-reconnect
     async def health_check():
+        reconnect_attempts = 0
+        max_reconnect = 5
+        
         while True:
             await asyncio.sleep(300)  # Every 5 minutes
             if logger:
                 logger.info("[HEALTH] Telegram collector alive")
                 logger.info(f"Connected: {client.is_connected()}")
+            
+            # Auto-reconnect if disconnected
+            if not client.is_connected():
+                reconnect_attempts += 1
+                if logger:
+                    logger.warning(f"Connection lost! Reconnect attempt {reconnect_attempts}/{max_reconnect}")
+                
+                if reconnect_attempts > max_reconnect:
+                    if logger:
+                        logger.error("Max reconnect attempts reached. Restarting collector...")
+                    # Exit to let PM2 restart us
+                    os._exit(1)
+                
+                try:
+                    await client.connect()
+                    if client.is_connected():
+                        reconnect_attempts = 0
+                        if logger:
+                            logger.info("Reconnected successfully!")
+                except Exception as e:
+                    if logger:
+                        logger.error(f"Reconnect failed: {e}")
+                    await asyncio.sleep(30 * reconnect_attempts)  # Backoff
 
     # Start health check
     asyncio.create_task(health_check())
 
-    # Run until disconnected
-    try:
-        await client.run_until_disconnected()
-    except KeyboardInterrupt:
-        if logger:
-            logger.info("Telegram collector shutting down...")
-    finally:
-        await client.disconnect()
+    # Run with session error recovery
+    session_errors = 0
+    max_session_errors = 10
+    
+    while True:
+        try:
+            await client.run_until_disconnected()
+            break  # Clean exit
+        except KeyboardInterrupt:
+            if logger:
+                logger.info("Telegram collector shutting down...")
+            break
+        except Exception as e:
+            error_msg = str(e).lower()
+            
+            # Check for session-related errors
+            if "session" in error_msg or "security" in error_msg or "auth" in error_msg:
+                session_errors += 1
+                if logger:
+                    logger.warning(f"Session error ({session_errors}/{max_session_errors}): {e}")
+                
+                if session_errors >= max_session_errors:
+                    if logger:
+                        logger.error("Too many session errors. Exiting for PM2 restart...")
+                    break
+                
+                # Try to reconnect
+                await asyncio.sleep(5)
+                try:
+                    await client.disconnect()
+                    await asyncio.sleep(2)
+                    await client.connect()
+                    if logger:
+                        logger.info("Reconnected after session error")
+                except Exception as re:
+                    if logger:
+                        logger.error(f"Reconnect after session error failed: {re}")
+            else:
+                if logger:
+                    logger.error(f"Unexpected error: {e}")
+                break
+    
+    await client.disconnect()
