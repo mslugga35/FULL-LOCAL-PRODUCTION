@@ -7,6 +7,7 @@ Matches the existing format: Site | League | Date | Matchup | Service | Pick | R
 """
 
 import os
+import re
 import sys
 import json
 import logging
@@ -46,7 +47,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TIMEZONE = pytz.timezone("America/New_York")
-SHEET_ID = os.getenv("GOOGLE_SHEET_ID", "1dZe1s-yLHYvrLQEAlP0gGCVAFNbH433lV82iHzp-_BI")
+SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
+if not SHEET_ID:
+    raise ValueError("GOOGLE_SHEET_ID environment variable is required")
 GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH")
 
 BASE_DIR = Path(__file__).parent.parent.parent
@@ -163,7 +166,6 @@ class TelegramToSheetsExporter:
         if not text:
             return "Unknown"
         
-        import re
         lines = [l.strip() for l in text.strip().split('\n') if l.strip()]
         if not lines:
             return "Unknown"
@@ -312,8 +314,6 @@ class TelegramToSheetsExporter:
             "EUROLEAGUE": ["euroleague", "euro league"],
         }
         
-        import re
-        
         for line in lines:
             # Clean up line - remove bullets and extra whitespace
             line = line.strip()
@@ -411,7 +411,6 @@ class TelegramToSheetsExporter:
         # Look for patterns like "Team @ Team" or "Team vs Team"
         clean_matchup = matchup.strip() if matchup else ""
         if not clean_matchup:
-            import re
             # Pattern: Team @ Team or Team vs Team
             matchup_match = re.search(r'([A-Za-z][A-Za-z\s\.\-]+?)\s*(?:@|vs\.?|v\.?)\s*([A-Za-z][A-Za-z\s\.\-]+?)(?:\s*[:\-]|\s*$)', pick_text, re.IGNORECASE)
             if matchup_match:
@@ -480,7 +479,6 @@ class TelegramToSheetsExporter:
                 continue
             
             # Look for pick patterns: team +/- number, ML, over/under
-            import re
             pick_patterns = [
                 r'([A-Za-z\s]+)\s*([+-]\d+\.?\d*)',  # Team +/- spread
                 r'([A-Za-z\s]+)\s+(ML|ml|Ml)',       # Team ML

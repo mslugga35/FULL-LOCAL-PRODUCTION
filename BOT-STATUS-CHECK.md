@@ -113,14 +113,14 @@ Exports picks from **free_cappers** Telegram channel to a Google Doc for the n8n
 | **Source Data** | `Telegram_Discord\message_queue\free_cappers\` and `Telegram_Discord\sent_archive\YYYYMMDD\free_cappers\` |
 
 ### Google Doc Being Updated
-- **Document ID:** `1QAUgTvFZq3PlA25vznkly8CHb4uNsIRYEZ0oXCitKxo`
-- **URL:** https://docs.google.com/document/d/1QAUgTvFZq3PlA25vznkly8CHb4uNsIRYEZ0oXCitKxo/edit
+- **Document ID:** `<GOOGLE_DOC_ID - see .env>`
+- **URL:** `<GOOGLE_DOC_URL - see .env>`
 
 ### Environment Variables (in .env)
 ```
-GOOGLE_DOC_ID=1QAUgTvFZq3PlA25vznkly8CHb4uNsIRYEZ0oXCitKxo
+GOOGLE_DOC_ID=<GOOGLE_DOC_ID - see .env>
 GOOGLE_CREDENTIALS_PATH=C:\Users\mpmmo\FULL-LOCAL-PRODUCTION\Telegram_Discord\config\google_service_account.json
-GOOGLE_AI_API_KEY=AIzaSy... (for Gemini OCR)
+GOOGLE_AI_API_KEY=<GOOGLE_AI_API_KEY - see .env>
 TIMEZONE=America/New_York
 ```
 

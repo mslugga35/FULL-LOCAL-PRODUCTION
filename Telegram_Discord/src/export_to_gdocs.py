@@ -596,11 +596,13 @@ class PicksAggregator:
                             filtered_lines.append(text_line)
                         text = '\n'.join(filtered_lines).strip()
 
+                    # Initialize ocr_text for use in recap filter below
+                    ocr_text = ""
+
                     # If no text OR very short text (just a name) but has image, try vision/OCR
                     # Short text (< 30 chars) is likely just a capper name after filtering
                     if pick.get('has_media') and pick.get('media_path') and (not text or len(text) < 30):
                         media_path = pick.get('media_path')
-                        ocr_text = ""
                         
                         # Try vision-processed data first (structured picks)
                         msg_id = pick.get('id')
@@ -653,8 +655,7 @@ class PicksAggregator:
 
                     # Filter out recap/result messages using SMART filter
                     # Combines text + OCR and needs multiple indicators to filter
-                    combined_text = f"{text}\n{ocr_text if 'ocr_text' in dir() else ''}".strip()
-                    should_filter, filter_reason = should_filter_message(text, ocr_text if 'ocr_text' in dir() else '')
+                    should_filter, filter_reason = should_filter_message(text, ocr_text)
                     if should_filter:
                         logger.info(f"Smart filtered ({filter_reason}): {text[:60]}...")
                         continue

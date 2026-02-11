@@ -35,7 +35,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TIMEZONE = pytz.timezone("America/New_York")
-SHEET_ID = os.getenv("GOOGLE_SHEET_ID", "1dZe1s-yLHYvrLQEAlP0gGCVAFNbH433lV82iHzp-_BI")
+SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
+if not SHEET_ID:
+    raise ValueError("GOOGLE_SHEET_ID environment variable is required")
 GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH")
 
 SCOPES = [

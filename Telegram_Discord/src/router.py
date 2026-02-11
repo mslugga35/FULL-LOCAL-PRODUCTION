@@ -22,7 +22,7 @@ from config.channel_routing_map import ROUTING_MAP
 
 
 # Load environment variables
-BASE_PATH = Path("C:\\Users\\mpmmo\\FULL-LOCAL-PRODUCTION\\Telegram_Discord")
+BASE_PATH = Path(__file__).parent.parent
 load_dotenv(BASE_PATH / ".env")
 
 # Load settings
@@ -221,7 +221,7 @@ class MessageRouter:
                 error_dir = self.queue_base / "errors"
                 error_dir.mkdir(parents=True, exist_ok=True)
                 move(message_path, str(error_dir))
-            except:
+            except Exception:
                 pass
 
             return False

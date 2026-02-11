@@ -6,11 +6,11 @@ Consensus Pipeline Scheduler
 """
 
 import subprocess
-import time
-from datetime import datetime
-import pytz
 import sys
+import time
 import os
+from datetime import datetime, timedelta
+import pytz
 
 # Config
 EST = pytz.timezone('America/New_York')
@@ -40,7 +40,7 @@ def run_pipeline():
     
     try:
         result = subprocess.run(
-            ['python', PIPELINE_SCRIPT],
+            [sys.executable, PIPELINE_SCRIPT],
             cwd=os.path.dirname(PIPELINE_SCRIPT),
             capture_output=False,
             timeout=300  # 5 min timeout
@@ -89,7 +89,7 @@ def main():
     
     while True:
         delay, mode = get_next_run_delay()
-        next_run = datetime.now(EST).replace(microsecond=0) + __import__('datetime').timedelta(seconds=delay)
+        next_run = datetime.now(EST).replace(microsecond=0) + timedelta(seconds=delay)
         
         print(f"\n[{datetime.now(EST).strftime('%H:%M:%S')}] Mode: {mode}")
         print(f"Next run at: {next_run.strftime('%H:%M:%S')} EST ({delay//60} min {delay%60} sec)")

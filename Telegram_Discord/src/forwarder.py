@@ -5,6 +5,7 @@ import yaml
 import glob
 import shutil
 import sqlite3
+import logging
 import threading
 from pathlib import Path
 from dotenv import load_dotenv
@@ -126,13 +127,13 @@ def _run_gdocs_export():
         )
         _gdocs_last_export = time.time()
     except Exception as e:
-        pass  # Silently fail - export runs in background thread
+        logging.getLogger(__name__).debug(f"GDocs export trigger failed: {e}")
 
 
 def trigger_gdocs_export():
     """
     Trigger Google Docs export with debouncing.
-    Only exports if at least 3 seconds have passed since last export.
+    Only exports if at least 5 minutes have passed since last export.
     Runs in background thread to avoid blocking the forwarder.
     """
     global _gdocs_last_export
